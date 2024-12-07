@@ -2,27 +2,39 @@ package org.example;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
+@Getter
+@Setter
+@ToString
 public class Order {
-    @Getter
-    @Setter
-    private StatusOrderEnum orderStatusEnum;
+
     private List<Book> bookListInOrder;
+    private LocalDate finishDate;
+    private Double amountSum = 0.0d;
+    private Integer amountBook = 0;
+
+    private StatusOrderEnum orderStatusEnum;
 
 
     public Order() {
         bookListInOrder = new ArrayList<>();
+        finishDate =  LocalDate.now();
     }
 
-    public void addBook(Book book){
+    public void addBook(Book book) {
         bookListInOrder.add(book);
+        amountSum += book.getPrice();
+        amountBook++;
     }
 
-    public void deleteBook(Book book){
+    public void deleteBook(Book book) {
         bookListInOrder.remove(book);
+        amountSum -= book.getPrice();
+        amountBook--;
     }
 
 

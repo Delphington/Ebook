@@ -3,7 +3,6 @@ package org.example;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Objects;
 
 @Getter
@@ -15,6 +14,8 @@ public class Book {
     private String author;
     private LocalDate publishedData;
     private Double price;
+
+
     private StatusBookEnum statusBookEnum;
 
     public boolean equals(Object obj) {
