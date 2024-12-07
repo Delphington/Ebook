@@ -15,7 +15,6 @@ public class Order {
 
     public Order() {
         bookListInOrder = new ArrayList<>();
-
     }
 
     public void addBook(Book book){

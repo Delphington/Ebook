@@ -1,7 +1,5 @@
 package org.example;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-
 public class Manager {
     private BookManager bookManager;
     private OrderManager orderManager;
@@ -11,6 +9,10 @@ public class Manager {
         orderManager = new OrderManager();
     }
 
+
+    public void CreateOrder(){
+        orderManager.createOrder();
+    }
 
 
 
