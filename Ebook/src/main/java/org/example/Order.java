@@ -12,30 +12,35 @@ import java.util.*;
 @ToString
 public class Order {
 
-    private List<Book> bookListInOrder;
+    private List<CellBook> bookListInOrder;
     private LocalDate finishDate;
     private Double amountSum = 0.0d;
     private Integer amountBook = 0;
+    private List<RequestBook> requestBookList;
 
     private StatusOrderEnum orderStatusEnum;
 
 
     public Order() {
         bookListInOrder = new ArrayList<>();
-        finishDate =  LocalDate.now();
+        requestBookList = new ArrayList<>();
+        finishDate = LocalDate.now();
     }
 
-    public void addBook(Book book) {
+    public void addBook(CellBook book) {
+        if (book.getStatusBookEnum() == StatusBookEnum.NOT_AVAILABLE) {
+            requestBookList.add(new RequestBook(book, RequestBookStatus.OPEN));
+            System.out.println("Пока что такой книги нет в наличии");
+        }
+
         bookListInOrder.add(book);
         amountSum += book.getPrice();
         amountBook++;
     }
 
-    public void deleteBook(Book book) {
+    public void deleteBook(CellBook book) {
         bookListInOrder.remove(book);
         amountSum -= book.getPrice();
         amountBook--;
     }
-
-
 }
