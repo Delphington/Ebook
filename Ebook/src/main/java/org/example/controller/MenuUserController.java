@@ -14,16 +14,12 @@ public class MenuUserController implements Controller {
 
     public MenuUserController(Manager manager) {
         this.manager = manager;
-        bookController = new BookController(manager.getBookManager());
-        orderController = new OrderController();
+        bookController = new BookController(manager.getBookManager(), manager);
+        orderController = new OrderController(manager.getOrderManager(), manager.getBookManager(), manager);
 
     }
 
-
-    private void printMove() {
-
-    }
-
+    @Override
     public ActionType run() {
         while (true) {
             showMenu();
@@ -36,6 +32,7 @@ public class MenuUserController implements Controller {
 
     }
 
+    @Override
     public ActionType input() {
         ActionType actionType;
 
@@ -61,6 +58,7 @@ public class MenuUserController implements Controller {
         return actionType;
     }
 
+    @Override
     public void showMenu() {
         System.out.println("==============================");
         System.out.println("=======    Main menu   =======");

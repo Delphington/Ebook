@@ -17,4 +17,14 @@ public class Manager {
         this.orderManager = orderManager;
     }
 
+
+    public void changeBookStatus(CellBook cellBook) {
+        if (bookManager.checkExistBook(cellBook)) {
+            bookManager.changeStatusBook(cellBook);
+            orderManager.updateOrderList(cellBook);
+
+        } else {
+            bookManager.addBook(cellBook);
+        }
+    }
 }

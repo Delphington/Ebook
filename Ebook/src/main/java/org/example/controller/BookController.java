@@ -3,14 +3,17 @@ package org.example.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.example.CellBookManager;
+import org.example.Manager;
 
 
 @Log4j2
 public class BookController implements Controller {
     private CellBookManager cellBookManager;
+    private Manager manager;
 
-    public BookController(CellBookManager cellBookManager) {
+    public BookController(CellBookManager cellBookManager, Manager manager) {
         this.cellBookManager = cellBookManager;
+        this.manager = manager;
     }
 
 

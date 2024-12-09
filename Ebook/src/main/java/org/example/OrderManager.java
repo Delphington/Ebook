@@ -3,6 +3,7 @@ package org.example;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,19 +19,87 @@ public class OrderManager {
         this.orderList = orderList;
 
     }
-    public OrderManager(){
+
+    //Обновляем во всех заказах добавление новой книги
+    public void updateOrderList(CellBook cellBook) {
+        for (Order item : orderList) {
+            List<RequestBook> requestBookList = item.getRequestBookList();
+            for (RequestBook requestItem : requestBookList) {
+                if (requestItem.getCellBook().equals(cellBook)) {
+                    requestItem.setRequestBookStatus(RequestBookStatus.CLOSED);
+                }
+            }
+        }
+    }
+
+
+    public OrderManager() {
         orderList = new ArrayList<>();
+    }
+
+    public void createOrder() {
+        orderList.add(new Order());
+        System.out.println("## Заказ создан!");
+    }
+
+    public void cancelOrder(Order order) {
+        for (Order item : orderList) {
+            if (item.equals(order)) {
+                order.cancelOrder();
+                System.out.println("Заказ отменент!");
+                return;
+            }
+        }
+        System.out.println("Не найден заказ!");
+    }
+
+
+    public void completedOrder(Order order) {
+        for (Order item : orderList) {
+            if (item.equals(order)) {
+                List<RequestBook> requestBookList = item.getRequestBookList();
+                boolean flag = true;
+                for (RequestBook requestItem : requestBookList) {
+                    if (requestItem.getRequestBookStatus() == RequestBookStatus.OPEN) {
+                        flag = false;
+                    }
+                }
+                if (flag) {
+                    order.completedOrder();
+                    System.out.println("Заказ завершен!");
+                } else {
+                    System.out.println("# В заказе есть не книги недоступные");
+
+                }
+                ;
+            }
+        }
+        System.out.println("Не найден заказ!");
+
+    }
+
+    public List<RequestBook> getListRequestBooks(List<Order> orders) {
+        List<RequestBook> requestBookList = new ArrayList<>();
+        for (Order item : orders) {
+            List<RequestBook> temp = item.getRequestBookList();
+            for (RequestBook itemTemp : temp) {
+                if (itemTemp.getRequestBookStatus() == RequestBookStatus.OPEN) {
+                    requestBookList.add(itemTemp);
+                }
+            }
+        }
+        return requestBookList;
     }
 
 
     //Количество выполненных заказов
-    public List<Order> getCompletedOrder(List<Order> orderList){
-        return orderList.stream().filter(order -> order.getOrderStatusEnum()  == StatusOrderEnum.DONE)
+    public List<Order> getCompletedOrder(List<Order> orderList) {
+        return orderList.stream().filter(order -> order.getOrderStatusEnum() == StatusOrderEnum.DONE)
                 .collect(Collectors.toList());
     }
 
     //Выбор книг по статусу(приыбли не прибыли)
-    public List<Order> getOrderListByStatus(StatusOrderEnum status){
+    public List<Order> getOrderListByStatus(StatusOrderEnum status) {
         return orderList.stream().filter(order -> order.getOrderStatusEnum().equals(status))
                 .collect(Collectors.toList());
     }
@@ -48,11 +117,20 @@ public class OrderManager {
 
     }
 
-    public List<Order> sortByDate(List<Order> orders) {
+    public List<Order> sortByCreateDate(List<Order> orders) {
         return orders.stream()
-                .sorted(Comparator.comparing(Order::getFinishDate).reversed())
+                .sorted(Comparator.comparing(Order::getCreateDate).reversed())
                 .collect(Collectors.toList());
     }
+
+
+    public List<Order> sortByCompletedDate(List<Order> orders) {
+        return orders.stream()
+                .filter(i -> i.getOrderStatusEnum() == StatusOrderEnum.DONE) //Filter for DONE status
+                .sorted(Comparator.comparing(Order::getCreateDate).reversed())
+                .collect(Collectors.toList());
+    }
+
 
     public List<Order> sortByStatus(List<Order> orders) {
         return orders.stream()

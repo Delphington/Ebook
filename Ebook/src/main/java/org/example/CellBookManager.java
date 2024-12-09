@@ -57,6 +57,16 @@ public class CellBookManager {
     }
 
 
+    public boolean checkExistBook(CellBook cellBook) {
+        for (CellBook book : listBook) {
+            if (cellBook.equals(book)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public void deleteBook(CellBook book) {
         listBook.remove(book);
     }
@@ -65,6 +75,7 @@ public class CellBookManager {
     public void addBook(CellBook book) {
         listBook.add(book);
     }
+
 
     public void addBook() {
         String nameBook;
@@ -113,11 +124,22 @@ public class CellBookManager {
     }
 
 
-    public void changeStatusBook() {
+    //todo: несколько экземпляров
+    public void changeStatusBook(CellBook cellBook) {
+        for (CellBook item : listBook) {
+            if (item.equals(cellBook)) {
+                item.setStatusBookEnum(StatusBookEnum.AVAILABLE);
+                printStream.println("# Статус успешно изменен");
+            }
+        }
+
+    }
+
+
+    public CellBook getAnyCellBook() {
         String nameBook;
         String nameAuthor;
         LocalDate publishedData;
-        StatusBookEnum statusBookEnum = null;
         printStream.print("Введите название книги: ");
         nameBook = scanner.nextLine().trim();
 
@@ -132,6 +154,28 @@ public class CellBookManager {
             } catch (IllegalArgumentException e) {
                 printStream.println("Дата введена неверно попробуйте еще раз!");
             }
+        }
+
+        for (CellBook item : listBook) {
+            if (Objects.equals(item.getName(), nameBook)
+                    && Objects.equals(item.getAuthor(), nameAuthor)
+                    && Objects.equals(item.getPublishedData(), publishedData)) {
+                return item;
+            }
+        }
+//todo Заюзать Optional
+        return null;
+
+    }
+
+
+    public void changeStatusBook() {
+
+        StatusBookEnum statusBookEnum = null;
+        CellBook cellBookTemp = getAnyCellBook();
+        if (cellBookTemp == null) {
+            printStream.println("# нет такой книги");
+            return;
         }
 
 
@@ -158,19 +202,8 @@ public class CellBookManager {
                 break;
             }
         }
-
-        for (int i = 0; i < listBook.size(); i++) {
-            if (Objects.equals(listBook.get(i).getName(), nameBook)
-                    && Objects.equals(listBook.get(i).getAuthor(), nameAuthor)
-                    && Objects.equals(listBook.get(i).getPublishedData(), publishedData)) {
-                listBook.get(i).setStatusBookEnum(statusBookEnum);
-                printStream.println("## Статус успешно установленн!");
-                return;
-            }
-        }
-        printStream.println("## Книга не найдена!");
-
-
+        cellBookTemp.setStatusBookEnum(statusBookEnum);
+        printStream.println("## Статус успешно установленн!");
     }
 
 

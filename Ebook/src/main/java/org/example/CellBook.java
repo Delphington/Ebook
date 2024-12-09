@@ -49,7 +49,9 @@ public class CellBook extends Book {
         if (object == null || getClass() != object.getClass()) return false;
         if (!super.equals(object)) return false;
         CellBook bookCell = (CellBook) object;
-        return Objects.equals(description, bookCell.description) && Objects.equals(price, bookCell.price) && Objects.equals(references, bookCell.references) && statusBookEnum == bookCell.statusBookEnum && Objects.equals(lastDeliverDate, bookCell.lastDeliverDate) && Objects.equals(lastSelleDate, bookCell.lastSelleDate);
+        return Objects.equals(bookCell.getAuthor(), super.getAuthor())
+                && Objects.equals(bookCell.getName(), super.getName())
+                && Objects.equals(bookCell.getPublishedData(), super.getPublishedData());
     }
 
     @Override

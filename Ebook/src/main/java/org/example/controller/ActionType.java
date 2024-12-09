@@ -4,5 +4,6 @@ public enum ActionType {
     CONTINUE,
     EXIT,
     MAIN_MENU,
-    BOOK_MENU
+    BOOK_MENU,
+    ORDER_MENU
 }
