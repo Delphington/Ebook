@@ -3,7 +3,6 @@ package org.example;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,11 +20,11 @@ public class OrderManager {
     }
 
     //Обновляем во всех заказах добавление новой книги
-    public void updateOrderList(CellBook cellBook) {
+    public void updateOrderList(Book book) {
         for (Order item : orderList) {
             List<RequestBook> requestBookList = item.getRequestBookList();
             for (RequestBook requestItem : requestBookList) {
-                if (requestItem.getCellBook().equals(cellBook)) {
+                if (requestItem.getBook().equals(book)) {
                     requestItem.setRequestBookStatus(RequestBookStatus.CLOSED);
                 }
             }

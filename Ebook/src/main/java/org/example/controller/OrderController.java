@@ -6,15 +6,14 @@ import java.util.List;
 
 public class OrderController implements Controller {
     private OrderManager orderManager;
-    private CellBookManager bookManager;
+    private BookManager bookManager;
     private Manager manager;
 
-    public OrderController(OrderManager orderManager, CellBookManager cellBookManager, Manager manager) {
-        this.orderManager = orderManager;
-        this.bookManager = cellBookManager;
+    public OrderController(Manager manager) {
         this.manager = manager;
+        this.orderManager = manager.getOrderManager();
+        this.bookManager = manager.getBookManager();
     }
-    //Todo: завершить заказ когда все книги есть
 
 
     @Override
@@ -69,17 +68,12 @@ public class OrderController implements Controller {
             case 6 -> {
                 List<RequestBook> requestBookList = orderManager.getListRequestBooks(orderManager.getOrderList());
                 for (RequestBook item : requestBookList) {
-                    printStream.println(item.getCellBook());
+                    printStream.println(item.getBook());
                 }
             }
 
             case 7 -> {
-                CellBook cellBookTemp = bookManager.getAnyCellBook();
-                if (cellBookTemp == null) {
-                    printStream.println("Книга не найдена(");
-                } else {
-                    manager.changeBookStatus(cellBookTemp);
-                }
+                manager.changeAndAddBookStatus();
             }
             case 8 -> {
                 printStream.println(orderManager.sortByAmount(orderManager.getOrderList()));

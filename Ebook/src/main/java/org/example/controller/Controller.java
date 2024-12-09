@@ -12,4 +12,19 @@ public interface Controller {
     void showMenu();
 
     ActionType run();
+
+    default Integer parseStringToInteger() {
+        Integer temp;
+        while (true) {
+            try {
+                printStream.print("Сделайте выбор: ");
+                String nextLine = scanner.nextLine().trim();
+                temp = Integer.parseInt(nextLine);
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Неверный выбор! Попробуйте еще раз");
+            }
+        }
+        return temp;
+    }
 }

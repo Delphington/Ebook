@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class RequestBook {
-    private CellBook cellBook;
+    private Book book;
     private RequestBookStatus requestBookStatus;
 }

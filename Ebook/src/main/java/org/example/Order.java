@@ -18,7 +18,7 @@ public class Order {
     private Double amountSum = 0.0d;
     private Integer amountBook = 0;
 
-    private List<CellBook> bookListInOrder;
+    private List<Book> bookListInOrder;
     private List<RequestBook> requestBookList;
     private StatusOrderEnum orderStatusEnum;
 
@@ -45,7 +45,7 @@ public class Order {
 
 
 
-    public void addBook(CellBook book) {
+    public void addBook(Book book) {
         if(book.getStatusBookEnum() == StatusBookEnum.AVAILABLE){
             bookListInOrder.add(book); //todo: с деньгами
         }
@@ -57,7 +57,7 @@ public class Order {
 
     }
 
-    public void deleteBook(CellBook book) {
+    public void deleteBook(Book book) {
         bookListInOrder.remove(book);
         amountSum -= book.getPrice();
         amountBook--;
