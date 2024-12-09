@@ -3,6 +3,7 @@ package org.example;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,9 @@ public class OrderManager {
     public OrderManager(List<Order> orderList) {
         this.orderList = orderList;
 
+    }
+    public OrderManager(){
+        orderList = new ArrayList<>();
     }
 
 

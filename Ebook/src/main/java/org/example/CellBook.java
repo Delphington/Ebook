@@ -7,11 +7,28 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
+
 //todo: book можно вынести как отдельную сущность
 public class CellBook extends Book {
 
     private String description;
+
+
+    @Override
+    public String toString() {
+        return "CellBook{" +
+                "name=" + super.getName() +
+                ", author='" + super.getAuthor() +
+                ", publishedData=" + super.getPublishedData() +
+                ", description='" + description +
+                ", price=" + price +
+                ", references=" + references +
+                ", statusBookEnum=" + statusBookEnum +
+                ", lastDeliverDate=" + lastDeliverDate +
+                ", lastSelleDate=" + lastSelleDate +
+                '}' + '\n';
+    }
+
     private Double price;
 
     private Integer references = 0; //Сколько раз заказывали книгу

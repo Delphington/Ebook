@@ -1,17 +1,19 @@
 package org.example;
 
 
+import java.io.PrintStream;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
-import lombok.ToString;
 
-@ToString
 public class CellBookManager {
     @Getter
     private List<CellBook> listBook;
+    private final PrintStream printStream = System.out;
+    private final Scanner scanner = new Scanner(System.in);
 
 
     public CellBookManager(List<CellBook> listBook) {
@@ -19,22 +21,161 @@ public class CellBookManager {
     }
 
 
-    public void deleteBook(CellBook book){
+    //todo: вынести основные данные запроса книги в интерфейс
+    public void deleteBook() {
+        String nameBook;
+        String nameAuthor;
+        LocalDate publishedData;
+        printStream.print("Введите название книги: ");
+        nameBook = scanner.nextLine().trim();
+
+        printStream.print("Введите автора книги: ");
+        nameAuthor = scanner.nextLine().trim();
+
+        while (true) {
+            try {
+                printStream.print("Вывведите дату издания: ");
+                publishedData = LocalDate.parse(scanner.nextLine().trim());
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Дата введена неверно попробуйте еще раз!");
+            }
+        }
+
+
+        for (int i = 0; i < listBook.size(); i++) {
+            if (Objects.equals(listBook.get(i).getName(), nameBook)
+                    && Objects.equals(listBook.get(i).getAuthor(), nameAuthor)
+                    && Objects.equals(listBook.get(i).getPublishedData(), publishedData)) {
+                deleteBook(listBook.get(i));
+                printStream.println("## Книга удаленна успешно!");
+                return;
+            }
+        }
+        printStream.println("## Книга не найдена!");
+
+    }
+
+
+    public void deleteBook(CellBook book) {
         listBook.remove(book);
     }
 
 
-    public void addBook(CellBook book){
+    public void addBook(CellBook book) {
         listBook.add(book);
     }
 
-    public void setStatusBook(CellBook book) {
-        book.setStatusBookEnum(StatusBookEnum.NOT_AVAILABLE);
+    public void addBook() {
+        String nameBook;
+        String nameAuthor;
+        LocalDate publishedData;
+        String description;
+        Double price;
+        printStream.print("Вывведите название книги: ");
+        nameBook = scanner.nextLine().trim();
+
+        printStream.print("Вывведите автора книги: ");
+        nameAuthor = scanner.nextLine().trim();
+
+        while (true) {
+            try {
+                printStream.print("Вывведите дату издания: ");
+                publishedData = LocalDate.parse(scanner.nextLine().trim());
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Дата введена неверно попробуйте еще раз!");
+            }
+        }
+
+
+        printStream.print("Вывведите описание книги: ");
+        description = scanner.nextLine().trim();
+
+
+        while (true) {
+            try {
+                printStream.print("Введите стоимость книги: ");
+                price = Double.parseDouble(scanner.nextLine().trim());
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Цена введена неверно попробуйте еще раз!");
+            }
+        }
+
+
+        CellBook cellBook = new CellBook(nameBook, nameAuthor, publishedData,
+                description, price, StatusBookEnum.AVAILABLE);
+
+
+        addBook(cellBook);
+        printStream.println("### Книга добавленна!");
+    }
+
+
+    public void changeStatusBook() {
+        String nameBook;
+        String nameAuthor;
+        LocalDate publishedData;
+        StatusBookEnum statusBookEnum = null;
+        printStream.print("Введите название книги: ");
+        nameBook = scanner.nextLine().trim();
+
+        printStream.print("Введите автора книги: ");
+        nameAuthor = scanner.nextLine().trim();
+
+        while (true) {
+            try {
+                printStream.print("Вывведите дату издания: ");
+                publishedData = LocalDate.parse(scanner.nextLine().trim());
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Дата введена неверно попробуйте еще раз!");
+            }
+        }
+
+
+        while (true) {
+            printStream.println("Выбирите стутас книги: ");
+            printStream.println("[1] Книга доступна");
+            printStream.println("[2] Книга недоступна");
+            printStream.print("Введите число: ");
+            Integer inputNumber;
+            while (true) {
+                try {
+                    inputNumber = Integer.parseInt(scanner.nextLine().trim());
+                    break;
+                } catch (IllegalArgumentException illegalArgumentException) {
+                    printStream.println("Попробуйте еще раз");
+                }
+            }
+
+            switch (inputNumber) {
+                case 1 -> statusBookEnum = StatusBookEnum.AVAILABLE;
+                case 2 -> statusBookEnum = StatusBookEnum.NOT_AVAILABLE;
+            }
+            if (statusBookEnum != null) {
+                break;
+            }
+        }
+
+        for (int i = 0; i < listBook.size(); i++) {
+            if (Objects.equals(listBook.get(i).getName(), nameBook)
+                    && Objects.equals(listBook.get(i).getAuthor(), nameAuthor)
+                    && Objects.equals(listBook.get(i).getPublishedData(), publishedData)) {
+                listBook.get(i).setStatusBookEnum(statusBookEnum);
+                printStream.println("## Статус успешно установленн!");
+                return;
+            }
+        }
+        printStream.println("## Книга не найдена!");
+
+
     }
 
 
     //Список залежавшихся книг не проданные больше 6 месяцев
-    public List<CellBook> getStaleBook(List<CellBook> books){
+    public List<CellBook> getStaleBook(List<CellBook> books) {
         return books.stream()
                 .filter(i -> ChronoUnit.MONTHS.between(i.getLastDeliverDate(), i.getLastSelleDate()) > 6)
                 .collect(Collectors.toList());
