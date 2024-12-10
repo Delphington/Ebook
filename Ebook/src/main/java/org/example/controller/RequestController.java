@@ -49,6 +49,4 @@ public class RequestController implements Controller {
         }
         return actionType;
     }
-
-
 }

@@ -1,14 +1,7 @@
 package org.example;
 
-//package org.example;
-//
-//
-//import java.io.PrintStream;
-//import java.time.LocalDate;
-//import java.util.ArrayList;
-//import java.util.List;
-//
 
+import lombok.experimental.UtilityClass;
 import org.example.controller.MenuUserController;
 import org.example.model.*;
 
@@ -16,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class Main {
     // private static final PrintStream printStream =  System.out;
 

@@ -50,6 +50,12 @@ public class Order {
     }
 
 
+
+
+
+
+
+
     public boolean completedOrder() {
         for (Book item : bookListInOrder) {
             if (item.getAmount() == 0) {

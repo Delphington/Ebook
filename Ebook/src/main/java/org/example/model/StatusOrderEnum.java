@@ -1,5 +1,7 @@
 package org.example.model;
 
+import static org.example.controller.Controller.scanner;
+
 public enum StatusOrderEnum {
     NEW(1),
     DONE(2),
@@ -17,5 +19,24 @@ public enum StatusOrderEnum {
             }
         }
         throw new IllegalArgumentException("Неверный статус: " + value);
+    }
+
+    public static StatusOrderEnum getChosenOrderStatus() {
+        StatusOrderEnum statusOrderEnum;
+        while (true) {
+            System.out.println("Выберите новый статус");
+            System.out.println("[1] NEW");
+            System.out.println("[2] DONE");
+            System.out.println("[3] CANCEL");
+            int x;
+            try {
+                x = Integer.parseInt(scanner.nextLine().trim());
+                statusOrderEnum = StatusOrderEnum.fromValue(x);
+                break;
+            } catch (RuntimeException e) {
+                System.out.println("Неверный ввод! Попробуйте еще раз!");
+            }
+        }
+        return statusOrderEnum;
     }
 }

@@ -3,10 +3,12 @@ package org.example.model;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @ToString
@@ -15,7 +17,8 @@ public class OrderManager {
 
     private List<Order> orderList;
     private RequestBookManager requestBookManager;
-
+    private static final PrintStream printStream = System.out;
+    private static final Scanner scanner = new Scanner(System.in);
     public OrderManager(List<Order> orderList) {
         this.orderList = orderList;
 
@@ -133,6 +136,40 @@ public class OrderManager {
         }
         return x;
     }
+
+
+
+    public Integer getSelectedOrderIndex() {
+        printStream.println("Выбирите какой по счету заказ: ");
+        if (orderList.size() == 0) {
+            printStream.println("### нет заказов");
+        }
+
+        for (int i = 0; i < orderList.size(); i++) {
+            printStream.println("[" + (i + 1) + "] " + orderList.get(i));
+        }
+
+
+        Integer number;
+        while (true) {
+            try {
+                printStream.print("Введите число: ");
+                String line = scanner.nextLine().trim();
+                number = Integer.parseInt(line) - 1;
+                if (number >= 0 && orderList.size() > number) {
+                    break;
+                }
+                printStream.println("Неверный ввод! Попробуйте еще раз!");
+            } catch (IllegalArgumentException e) {
+                printStream.println("Неверный ввод! Попробуйте еще раз!");
+            }
+        }
+        return number;
+    }
+
+
+
+
 
 
     //Количество выполненных заказов

@@ -38,8 +38,6 @@ public class BookController implements Controller {
         switch (choseAction) {
             case 1 -> {
                 Integer indexBook = getIndexChooseBook(bookManager.getListBook());
-
-
                 Book book = bookManager.getListBook().get(indexBook);
                 manager.changeAndAddBookStatus(book);
             }

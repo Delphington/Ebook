@@ -50,13 +50,13 @@ public class OrderController implements Controller {
         switch (temp) {
             case 1 -> orderManager.createOrder();
             case 2 -> { //отменить заказа
-                Integer indexOrder = getIndexChooseOrder();
+                Integer indexOrder = orderManager.getSelectedOrderIndex();
                 orderManager.cancelOrder(orderManager.getOrderList().get(indexOrder));
             }
             //отмена заказа
             case 3 -> {
                 Integer indexBook = getIndexChooseBook(bookManager.getListBook());
-                Integer indexOrder = getIndexChooseOrder();
+                Integer indexOrder = orderManager.getSelectedOrderIndex();
                 Order orderTemp = orderManager.getOrderList().get(indexOrder);
                 orderTemp.addBook(bookManager.getListBook().get(indexBook));
             }
@@ -67,9 +67,9 @@ public class OrderController implements Controller {
             case 5 ->    requestBookManager.printRequestBook();
 
             case 6 -> {
-                Integer indexOrder = getIndexChooseOrder();
+                Integer indexOrder = orderManager.getSelectedOrderIndex();
                 Order orderTemp = orderManager.getOrderList().get(indexOrder);
-                orderManager.changeStatusOrder(orderTemp, getChouseStatusOrder());
+                orderManager.changeStatusOrder(orderTemp, StatusOrderEnum.getChosenOrderStatus());
             }
 
             case 7 -> {
@@ -92,35 +92,6 @@ public class OrderController implements Controller {
 
 
 
-    private Integer getIndexChooseOrder() {
-        printStream.println("Выбирите какой по счету заказ: ");
-        if (orderManager.getOrderList().size() == 0) {
-            printStream.println("### нет заказов");
-        }
-
-        for (int i = 0; i < orderManager.getOrderList().size(); i++) {
-            printStream.println("[" + (i + 1) + "] " + orderManager.getOrderList().get(i));
-        }
-
-
-        Integer number;
-        while (true) {
-            try {
-                printStream.print("Введите число: ");
-                String line = scanner.nextLine().trim();
-                number = Integer.parseInt(line) - 1;
-                if (number >= 0 && orderManager.getOrderList().size() > number) {
-                    break;
-                }
-                orderMenu.showErrorInput();
-            } catch (IllegalArgumentException e) {
-                orderMenu.showErrorInput();
-            }
-        }
-        return number;
-    }
-
-
     private void printMenuListBook() {
        orderMenu.showTypeInfoList();
         int choseAction;
@@ -135,27 +106,6 @@ public class OrderController implements Controller {
         switch (choseAction) {
             case 2 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
         }
-    }
-
-
-
-    private StatusOrderEnum getChouseStatusOrder() {
-        StatusOrderEnum statusOrderEnum;
-        while (true) {
-            System.out.println("Выберите новый статус");
-            System.out.println("[1] NEW");
-            System.out.println("[2] DONE");
-            System.out.println("[3] CANCEL");
-            int x;
-            try {
-                x = Integer.parseInt(scanner.nextLine().trim());
-                statusOrderEnum = StatusOrderEnum.fromValue(x);
-                break;
-            } catch (RuntimeException e) {
-                orderMenu.showErrorInput();
-            }
-        }
-        return statusOrderEnum;
     }
 
 }
