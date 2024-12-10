@@ -22,6 +22,7 @@ public class BookManager {
     }
 
     public void deleteBook() {
+        //todo: страый метод
         Book tempBook = createBook();
         Optional<Book> optional = checkExistBook(tempBook);
 

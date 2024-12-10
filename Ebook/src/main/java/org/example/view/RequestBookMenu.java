@@ -1,6 +1,10 @@
 package org.example.view;
 
-public class RequestBookMenu implements Menu{
+import org.example.model.Book;
+
+import java.util.List;
+
+public class RequestBookMenu implements Menu {
     @Override
     public void showMenu() {
         printStream.println("==============================");

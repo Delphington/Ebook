@@ -1,6 +1,6 @@
 package org.example.view;
 
-public class MainMenu implements Menu{
+public class MainMenu implements Menu {
     @Override
     public void showMenu() {
         printStream.println("==============================");
@@ -10,4 +10,5 @@ public class MainMenu implements Menu{
         printStream.println("[2] Работа с заказами");
         printStream.println("[3] Работа с запросами");
     }
+
 }

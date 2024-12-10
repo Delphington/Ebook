@@ -1,10 +1,10 @@
 package org.example.controller;
 
+import org.example.UtilsInput;
 import org.example.model.*;
 import org.example.view.OrderMenu;
 
 import java.time.LocalDate;
-import java.util.List;
 
 
 public class OrderController implements Controller {
@@ -41,7 +41,7 @@ public class OrderController implements Controller {
         try {
             temp = Integer.parseInt(nextLine);
         } catch (IllegalArgumentException e) {
-            printStream.println("Неверный выбор! Попробуйте еще раз");
+            orderMenu.showErrorInput();
             return ActionType.ORDER_MENU;
         }
 
@@ -61,7 +61,7 @@ public class OrderController implements Controller {
                 orderTemp.addBook(bookManager.getListBook().get(indexBook));
             }
 
-            case 4 -> printList(orderManager.sortByAmount(orderManager.getOrderList()));
+            case 4 ->  orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
 
             //printMenuListBook();
             case 5 ->    requestBookManager.printRequestBook();
@@ -73,8 +73,8 @@ public class OrderController implements Controller {
             }
 
             case 7 -> {
-                LocalDate localDate1 = inputDate();
-                LocalDate localDate2 = inputDate();
+                LocalDate localDate1 = UtilsInput.inputDateFromConsole();
+                LocalDate localDate2 = UtilsInput.inputDateFromConsole();
                 orderManager.getCompletedOrderByPrice(localDate1, localDate2);
 
             }
@@ -84,7 +84,7 @@ public class OrderController implements Controller {
 
             default -> {
                 actionType = ActionType.BOOK_MENU;
-                printStream.println("Неверный выбор! Попробуйте еще раз");
+                orderMenu.showErrorInput();
             }
         }
         return actionType;
@@ -112,9 +112,9 @@ public class OrderController implements Controller {
                 if (number >= 0 && orderManager.getOrderList().size() > number) {
                     break;
                 }
-                printStream.println("Неверно! Попробуй еще раз ввести число: ");
+                orderMenu.showErrorInput();
             } catch (IllegalArgumentException e) {
-                printStream.println("Попробуй еще раз ввести число: ");
+                orderMenu.showErrorInput();
             }
         }
         return number;
@@ -122,32 +122,22 @@ public class OrderController implements Controller {
 
 
     private void printMenuListBook() {
-        printStream.println("[1] Вывести список заказов (сортировка по дате исполнения)");
-        printStream.println("[2] Вывести список заказов (сортировка по цене)");
-        printStream.println("[3] Вывести список заказов (сортировка по статусу)");
-        printStream.println("[4] Вывести список выполненных заказов за период времени(сортировка по дате)");
-        printStream.println("[5] Вывести список выполненных заказов за период времени(сортировка по цене)");
-        printStream.println("[6] Вывести количество выполненных заказов за период времени");
-
+       orderMenu.showTypeInfoList();
         int choseAction;
         while (true) {
             choseAction = parseStringToInteger();
             if (choseAction >= 1 && choseAction <= 6) {
                 break;
             }
-            printStream.println("Попробуйте еще раз, это не верно!");
+            orderMenu.showErrorInput();
         }
 
         switch (choseAction) {
-            case 2 -> printList(orderManager.sortByAmount(orderManager.getOrderList()));
+            case 2 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
         }
     }
 
-    private void printList(List<Order> orders) {
-        for (int i = 0; i < orders.size(); i++) {
-            printStream.println("{" + (i + 1) + "} " + orders.get(i));
-        }
-    }
+
 
     private StatusOrderEnum getChouseStatusOrder() {
         StatusOrderEnum statusOrderEnum;
@@ -162,57 +152,11 @@ public class OrderController implements Controller {
                 statusOrderEnum = StatusOrderEnum.fromValue(x);
                 break;
             } catch (RuntimeException e) {
-                printStream.println("Невернный ввод!");
+                orderMenu.showErrorInput();
             }
         }
         return statusOrderEnum;
     }
-
-
-    private LocalDate inputDate() {
-        int year;
-        int month;
-        int day;
-        while (true) {
-            printStream.print("Введите год: ");
-            try {
-                year = Integer.parseInt(scanner.nextLine().trim());
-                if (year > 0 && year < 3000) {
-                    break;
-                }
-                printStream.println("Ошибка, не попали в верный промежуток!");
-            } catch (RuntimeException e) {
-                printStream.println("Ошибка, попробуйте еще раз!");
-            }
-        }
-
-        while (true) {
-            printStream.print("Введите месяц: ");
-            try {
-                month = Integer.parseInt(scanner.nextLine().trim());
-                if (month > 0 && month < 13) {
-                    break;
-                }
-                printStream.println("Ошибка, не попали в верный промежуток!");
-            } catch (RuntimeException e) {
-                printStream.println("Ошибка, попробуйте еще раз!");
-            }
-        }
-        while (true) {
-            printStream.print("Введите день: ");
-            try {
-                day = Integer.parseInt(scanner.nextLine().trim());
-                if (day > 0 && day < 32) {
-                    break;
-                }
-                printStream.println("Ошибка, не попали в верный промежуток!");
-            } catch (RuntimeException e) {
-                printStream.println("Ошибка, попробуйте еще раз!");
-            }
-        }
-        return LocalDate.of(year, month, day);
-    }
-
 
 }
 

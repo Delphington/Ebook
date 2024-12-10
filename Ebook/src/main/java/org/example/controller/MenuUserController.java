@@ -41,7 +41,7 @@ public class MenuUserController implements Controller {
             case 3 -> actionType = requestController.run();
             default -> {
                 actionType = ActionType.MAIN_MENU;
-                printStream.println("Неверный выбор! Попробуйте еще раз");
+                mainMenu.showErrorInput();
             }
         }
         return actionType;

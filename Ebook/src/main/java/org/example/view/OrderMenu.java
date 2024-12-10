@@ -1,5 +1,7 @@
 package org.example.view;
 
+import java.util.List;
+
 public class OrderMenu implements Menu{
     @Override
     public void showMenu() {
@@ -18,5 +20,23 @@ public class OrderMenu implements Menu{
         printStream.println("[14] Вернуться в главное меню");
         printStream.println("[15] Выйти из программы");
         printStream.print("Введите число: ");
+    }
+
+
+    @Override
+    public void showTypeInfoList() {
+        printStream.println("[1] Вывести список заказов (сортировка по дате исполнения)");
+        printStream.println("[2] Вывести список заказов (сортировка по цене)");
+        printStream.println("[3] Вывести список заказов (сортировка по статусу)");
+        printStream.println("[4] Вывести список выполненных заказов за период времени(сортировка по дате)");
+        printStream.println("[5] Вывести список выполненных заказов за период времени(сортировка по цене)");
+        printStream.println("[6] Вывести количество выполненных заказов за период времени");
+    }
+
+    @Override
+    public void printListObject(List<? extends Object> orders) {
+        for (int i = 0; i < orders.size(); i++) {
+            printStream.println("{" + (i + 1) + "} " + orders.get(i));
+        }
     }
 }

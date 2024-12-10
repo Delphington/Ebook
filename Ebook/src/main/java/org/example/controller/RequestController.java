@@ -38,21 +38,17 @@ public class RequestController implements Controller {
                 Integer indexBook = getIndexChooseBook(manager.getBookManager().getListBook());
                 manager.getRequestBookManager().createRequestBook(manager.getBookManager().getListBook().get(indexBook));
             }
-            case 2 -> printList(manager.getRequestBookManager().getBookRequestSortedReference());
+            case 2 -> requestBookMenu.printListObject(manager.getRequestBookManager().getBookRequestSortedReference());
             case 3 -> printStream.println();
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;
             default -> {
                 actionType = ActionType.MAIN_MENU;
-                printStream.println("Неверный выбор! Попробуйте еще раз");
+                requestBookMenu.showErrorInput();
             }
         }
         return actionType;
     }
 
-    private void printList(List<Book> book) {
-        for (int i = 0; i < book.size(); i++) {
-            printStream.println("{" + (i + 1) + "} " + book.get(i) + ", reference = " + book.get(i).getReferences());
-        }
-    }
+
 }
