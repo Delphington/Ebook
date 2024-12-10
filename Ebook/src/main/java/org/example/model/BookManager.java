@@ -48,6 +48,12 @@ public class BookManager {
                 .collect(Collectors.toList());
     }
 
+    public List<Book> sorByReference(List<Book> books) {
+        return books.stream()
+                .sorted(Comparator.comparing(Book::getReferences).reversed())
+                .collect(Collectors.toList());
+    }
+
     public List<Book> sortByDatePublished(List<Book> books) {
         return books.stream()
                 .sorted(Comparator.comparing(Book::getPublishedData).reversed())

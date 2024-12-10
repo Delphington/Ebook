@@ -29,6 +29,10 @@ public class BookMenu implements Menu {
 
     @Override
     public void printListObject(List<? extends Object> book) {
+        if(book.size() ==0 ){
+            printStream.println("### В массиве пусто");
+            return;
+        }
         for (int i = 0; i < book.size(); i++) {
             printStream.println("{" + (i + 1) + "} " + book.get(i));
         }

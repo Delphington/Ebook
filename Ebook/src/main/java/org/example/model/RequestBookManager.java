@@ -23,6 +23,8 @@ public class RequestBookManager {
         RequestBook requestBook = new RequestBook(book);
         addRequestBook(requestBook);
         book.incrementReferences();
+        System.out.println("### Запрос добавлен успешно");
+
         return Optional.of(requestBook);
     }
 
@@ -41,12 +43,12 @@ public class RequestBookManager {
     }
 
 
-    public List<Book> getBookRequestSortedReference() {
-        List<Book> books = new ArrayList<>();
+    public List<Book> getBookFromRequestBook() {
+        List<Book> bookList = new ArrayList<>();
         for (RequestBook requestBook : RequestBook.requestBookList) {
-            books.add(requestBook.getBook());
+            bookList.add(requestBook.getBook());
         }
-        return books.stream().sorted(Comparator.comparing(Book::getReferences).reversed()).collect(Collectors.toList());
+        return bookList;
     }
 
 

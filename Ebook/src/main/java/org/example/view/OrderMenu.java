@@ -36,6 +36,10 @@ public class OrderMenu implements Menu{
     //todo: можно будто бы в интерфейс вынести и делать .super
     @Override
     public void printListObject(List<? extends Object> orders) {
+        if(orders.size() ==0 ){
+            printStream.println("### В массиве пусто");
+            return;
+        }
         for (int i = 0; i < orders.size(); i++) {
             printStream.println("{" + (i + 1) + "} " + orders.get(i));
         }

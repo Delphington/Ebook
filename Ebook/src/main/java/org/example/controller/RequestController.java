@@ -3,6 +3,7 @@ package org.example.controller;
 import org.example.UtilsInput;
 import org.example.model.Book;
 import org.example.model.Manager;
+import org.example.model.RequestBookManager;
 import org.example.view.RequestBookMenu;
 
 import java.util.List;
@@ -11,9 +12,11 @@ public class RequestController implements Controller {
 
     private Manager manager;
     private RequestBookMenu requestBookMenu;
+    private RequestBookManager requestBookManager;
 
     public RequestController(Manager manager) {
         this.manager = manager;
+        this.requestBookManager = manager.getRequestBookManager();
         requestBookMenu = new RequestBookMenu();
     }
 
@@ -37,16 +40,13 @@ public class RequestController implements Controller {
         switch (temp) {
             case 1 -> {
                 Integer indexBook = getIndexChooseBook(manager.getBookManager().getListBook());
-                manager.getRequestBookManager().createRequestBook(manager.getBookManager().getListBook().get(indexBook));
+                requestBookManager.createRequestBook(manager.getBookManager().getListBook().get(indexBook));
             }
-            case 2 -> requestBookMenu.printListObject(manager.getRequestBookManager().getBookRequestSortedReference());
-            case 3 -> printStream.println();
+            case 2 -> requestBookMenu.printListObject(manager.getBookManager().sorByReference(requestBookManager.getBookFromRequestBook()));
+            case 3 -> requestBookMenu.printListObject(manager.getBookManager().sorByPrice(requestBookManager.getBookFromRequestBook()));
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;
-            default -> {
-                actionType = ActionType.MAIN_MENU;
-                requestBookMenu.showErrorInput();
-            }
+            default -> requestBookMenu.showErrorInput();
         }
         return actionType;
     }
