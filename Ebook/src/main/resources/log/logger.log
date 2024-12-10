@@ -1,3 +1,3 @@
-2024-12-09 00:59:28 WARN  MenuUserController - Невернный выбор главное меню
-2024-12-09 01:05:25 WARN  MenuUserController - Невернный выбор главное меню
-2024-12-09 12:20:03 WARN  MenuUserController - Невернный выбор главное меню
+2024-12-10 14:16:19 INFO  Manager - Создана книга Book{name='5A', author='5B', publishedData=1925-04-10, price=105.0, amount=1, description=5}
+2024-12-10 14:21:09 INFO  Manager - Создана книга Book{name='5A', author='5B', publishedData=1925-04-10, price=105.0, amount=1, description=5}
+2024-12-10 14:26:00 INFO  Manager - Создана книга Book{name='1A', author='1B', publishedData=1954-07-29, price=101.0, amount=1, description=1}

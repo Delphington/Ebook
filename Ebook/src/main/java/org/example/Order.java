@@ -11,68 +11,70 @@ import java.util.*;
 @Setter
 @ToString
 
+
+//ID детали заказа
 public class Order {
     private LocalDate finishDate;
     private LocalDate createDate;
     private LocalDate completedDate;
     private Double amountSum = 0.0d;
     private Integer amountBook = 0;
-
     private List<Book> bookListInOrder;
-    private List<RequestBook> requestBookList;
     private StatusOrderEnum orderStatusEnum;
-
 
     public Order() {
         bookListInOrder = new ArrayList<>();
-        requestBookList = new ArrayList<>();
         createDate = LocalDate.now();
-        orderStatusEnum = StatusOrderEnum.NEW;
-    }
-
-
-    public void completedOrder() {
-        finishDate = LocalDate.now();
         orderStatusEnum = StatusOrderEnum.DONE;
     }
-    public void cancelOrder(){
-        //todo:
+
+    //Если ли бук в листе??
+    public void addBook(Book book) {
+        bookListInOrder.add(book);
+        amountSum += book.getPrice();
+        if (book.getStatusBookEnum() == StatusBookEnum.AVAILABLE) {
+            System.out.println("Книги есть! Книга добалвенна");
+        } else {
+            orderStatusEnum = StatusOrderEnum.NEW;
+            RequestBook.createRequestBook(book);
+            book.incrementReferences();
+            System.out.println("Книги нет! Книга добавленна в запрос");
+        }
+    }
+
+
+    public boolean completedOrder() {
+        for (Book item : bookListInOrder) {
+            if (item.getAmount() == 0) {
+                System.out.println("Не все книги доступны");
+                return false;
+            }
+        }
+
+        for (Book item : bookListInOrder) {
+            item.incrementAmount();
+            item.setLastSelleDate(LocalDate.now());
+        }
+        orderStatusEnum = StatusOrderEnum.DONE;
+        return true;
+    }
+
+    public void cancelOrder() {
         finishDate = LocalDate.now();
         orderStatusEnum = StatusOrderEnum.CANCEL;
     }
 
-
-
-
-
-    public void addBook(Book book) {
-        if(book.getStatusBookEnum() == StatusBookEnum.AVAILABLE){
-            bookListInOrder.add(book); //todo: с деньгами
-        }
-        //Когда нет книги
-        else{
-            requestBookList.add(new RequestBook(book, RequestBookStatus.OPEN));
-            System.out.println("Книги нет! Книга добалвенна в запрос");
-        }
-
-    }
-
-    public void deleteBook(Book book) {
-        bookListInOrder.remove(book);
-        amountSum -= book.getPrice();
-        amountBook--;
-    }
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Order order = (Order) object;
-        return Objects.equals(bookListInOrder, order.bookListInOrder) && Objects.equals(createDate, order.createDate) && Objects.equals(completedDate, order.completedDate) && Objects.equals(amountSum, order.amountSum) && Objects.equals(amountBook, order.amountBook) && Objects.equals(requestBookList, order.requestBookList) && orderStatusEnum == order.orderStatusEnum;
+        return Objects.equals(finishDate, order.finishDate) && Objects.equals(createDate, order.createDate) && Objects.equals(completedDate, order.completedDate) && Objects.equals(amountSum, order.amountSum) && Objects.equals(amountBook, order.amountBook) && Objects.equals(bookListInOrder, order.bookListInOrder) && orderStatusEnum == order.orderStatusEnum;
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(bookListInOrder, finishDate, createDate, completedDate, amountSum, amountBook, requestBookList, orderStatusEnum);
-//    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(finishDate, createDate, completedDate, amountSum, amountBook, bookListInOrder, orderStatusEnum);
+    }
 }

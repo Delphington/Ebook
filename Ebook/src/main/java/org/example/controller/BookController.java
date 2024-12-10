@@ -1,7 +1,10 @@
 package org.example.controller;
 
+import org.example.Book;
 import org.example.BookManager;
 import org.example.Manager;
+
+import java.util.List;
 
 public class BookController implements Controller {
     private BookManager bookManager;
@@ -31,9 +34,15 @@ public class BookController implements Controller {
         int choseAction = parseStringToInteger();
 
         switch (choseAction) {
-            case 1 -> manager.changeAndAddBookStatus();
-            case 2 -> bookManager.deleteBook();
-            case 3 -> printListBook();
+            case 1 -> {
+                printList(bookManager.sortByName(bookManager.getListBook()));
+                manager.changeAndAddBookStatus();
+            }
+            case 2 -> {
+                printList(bookManager.sortByName(bookManager.getListBook()));
+                bookManager.deleteBook();
+            }
+            case 3 -> printMenuListBook();
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;
             default -> {
@@ -47,14 +56,14 @@ public class BookController implements Controller {
     //Смена статуса книи, То есть добавление существующий  из писка
     @Override
     public void showMenu() {
-        printStream.println("[1] Добавить новую книгу на склад");
+        printStream.println("[1] Добавить еще один экземпляр книги");
         printStream.println("[2] Списать книгу со склада");
         printStream.println("[3] Вывести список книг");
         printStream.println("[4] Вернуться в главное меню");
         printStream.println("[5] Выйти из программы");
     }
 
-    private void printListBook() {
+    private void printMenuListBook() {
         printStream.println("[1] Вывести список книг библиотеки (сортировка по алфавиту)");
         printStream.println("[2] Вывести список книг библиотеки (сортировка по дате издания)");
         printStream.println("[3] Вывести список книг библиотеки (сортировка по цене)");
@@ -70,11 +79,18 @@ public class BookController implements Controller {
         }
 
         switch (choseAction) {
-            case 1 -> printStream.println(bookManager.sortByName(bookManager.getListBook()));
-            case 2 -> printStream.println(bookManager.sortByDate(bookManager.getListBook()));
-            case 3 -> printStream.println(bookManager.sorByPrice(bookManager.getListBook()));
-            case 4 -> printStream.println(bookManager.sortByStatus(bookManager.getListBook()));
-            case 5 -> bookManager.getStaleBook(bookManager.getListBook());
+            case 1 -> printList(bookManager.sortByName(bookManager.getListBook()));
+            case 2 -> printList(bookManager.sortByDate(bookManager.getListBook()));
+            case 3 -> printList(bookManager.sorByPrice(bookManager.getListBook()));
+            case 4 -> printList(bookManager.sortByStatus(bookManager.getListBook()));
+            case 5 -> printList(bookManager.getStaleBook(bookManager.getListBook()));
+        }
+    }
+
+
+    private void printList(List<Book> book) {
+        for (int i = 0; i < book.size(); i++) {
+            printStream.println("{" + (i + 1) + "} " + book.get(i));
         }
     }
 }

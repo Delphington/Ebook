@@ -4,6 +4,7 @@ import org.example.Manager;
 
 public class MenuUserController implements Controller {
 
+    private RequestController requestController;
     private OrderController orderController;
     private BookController bookController;
     private Manager manager;
@@ -12,6 +13,7 @@ public class MenuUserController implements Controller {
         this.manager = manager;
         bookController = new BookController(manager);
         orderController = new OrderController(manager);
+        requestController = new RequestController(manager);
     }
 
     @Override
@@ -33,6 +35,7 @@ public class MenuUserController implements Controller {
         switch (temp) {
             case 1 -> actionType = bookController.run();
             case 2 -> actionType = orderController.run();
+            case 3 -> actionType = requestController.run();
             default -> {
                 actionType = ActionType.MAIN_MENU;
                 printStream.println("Неверный выбор! Попробуйте еще раз");
@@ -48,5 +51,6 @@ public class MenuUserController implements Controller {
         printStream.println("==============================");
         printStream.println("[1] Работа с книгами");
         printStream.println("[2] Работа с заказами");
+        printStream.println("[3] Работа с запросами");
     }
 }

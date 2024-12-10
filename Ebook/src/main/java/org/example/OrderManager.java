@@ -19,14 +19,33 @@ public class OrderManager {
 
     }
 
-    //Обновляем во всех заказах добавление новой книги
-    public void updateOrderList(Book book) {
+
+    //Обновляем реквесты добавление новой книги
+    public boolean updateRequestList(Book book) {
+        for (RequestBook requestBook : RequestBook.requestBookList) {
+            if (requestBook.getBook().equalsBook(book)) {
+                requestBook.setRequestBookStatus(RequestBookStatus.CLOSED);
+                book.incrementAmount();
+                System.out.println("Был изменен одина книга");
+                updateOrderList();
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public void updateOrderList() {
         for (Order item : orderList) {
-            List<RequestBook> requestBookList = item.getRequestBookList();
-            for (RequestBook requestItem : requestBookList) {
-                if (requestItem.getBook().equals(book)) {
-                    requestItem.setRequestBookStatus(RequestBookStatus.CLOSED);
+            int sizeList = item.getBookListInOrder().size();
+            int cnt = 0;
+            for (Book bookItem : item.getBookListInOrder()) {
+                if (bookItem.getAmount() > 0) {
+                    cnt++;
                 }
+            }
+            if (cnt == sizeList) {
+                item.setOrderStatusEnum(StatusOrderEnum.DONE);
             }
         }
     }
@@ -56,39 +75,25 @@ public class OrderManager {
     public void completedOrder(Order order) {
         for (Order item : orderList) {
             if (item.equals(order)) {
-                List<RequestBook> requestBookList = item.getRequestBookList();
-                boolean flag = true;
-                for (RequestBook requestItem : requestBookList) {
-                    if (requestItem.getRequestBookStatus() == RequestBookStatus.OPEN) {
-                        flag = false;
-                    }
-                }
-                if (flag) {
-                    order.completedOrder();
-                    System.out.println("Заказ завершен!");
-                } else {
-                    System.out.println("# В заказе есть не книги недоступные");
-
-                }
-                ;
+                item.completedOrder();
+                return;
             }
         }
         System.out.println("Не найден заказ!");
-
     }
-
-    public List<RequestBook> getListRequestBooks(List<Order> orders) {
-        List<RequestBook> requestBookList = new ArrayList<>();
-        for (Order item : orders) {
-            List<RequestBook> temp = item.getRequestBookList();
-            for (RequestBook itemTemp : temp) {
-                if (itemTemp.getRequestBookStatus() == RequestBookStatus.OPEN) {
-                    requestBookList.add(itemTemp);
-                }
-            }
-        }
-        return requestBookList;
-    }
+//
+//    public List<RequestBook> getListRequestBooks(List<Order> orders) {
+//        List<RequestBook> requestBookList = new ArrayList<>();
+//        for (Order item : orders) {
+//            List<RequestBook> temp = item.getRequestBookList();
+//            for (RequestBook itemTemp : temp) {
+//                if (itemTemp.getRequestBookStatus() == RequestBookStatus.OPEN) {
+//                    requestBookList.add(itemTemp);
+//                }
+//            }
+//        }
+//        return requestBookList;
+//    }
 
 
     //Количество выполненных заказов

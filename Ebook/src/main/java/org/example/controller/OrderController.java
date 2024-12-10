@@ -41,9 +41,8 @@ public class OrderController implements Controller {
         ActionType actionType = ActionType.ORDER_MENU;
 
         switch (temp) {
-            case 1 -> {
-                orderManager.createOrder();
-            }
+            case 1 -> orderManager.createOrder();
+
             case 2 -> { //завершение заказа
                 Integer index = getIndexChooseOrder();
                 orderManager.completedOrder(orderManager.getOrderList().get(index));
@@ -61,33 +60,20 @@ public class OrderController implements Controller {
                 orderTemp.addBook(bookManager.getListBook().get(indexBook));
             }
 
-            case 5 -> {
-                printStream.println(bookManager.getListBook());
-            }
-
+            case 5 -> printStream.println(bookManager.getListBook());
             case 6 -> {
-                List<RequestBook> requestBookList = orderManager.getListRequestBooks(orderManager.getOrderList());
-                for (RequestBook item : requestBookList) {
-                    printStream.println(item.getBook());
-                }
+//                List<RequestBook> requestBookList = orderManager.getListRequestBooks(orderManager.getOrderList());
+//                for (RequestBook item : requestBookList) {
+//                    printStream.println(item.getBook());
+//                }
             }
 
-            case 7 -> {
-                manager.changeAndAddBookStatus();
-            }
-            case 8 -> {
-                printStream.println(orderManager.sortByAmount(orderManager.getOrderList()));
-            }
-            case 9 -> {
-                printStream.println(orderManager.sortByStatus(orderManager.getOrderList()));
-            }
+            case 7 -> manager.changeAndAddBookStatus();
+            case 8 -> printStream.println(orderManager.sortByAmount(orderManager.getOrderList()));
+            case 9 -> printStream.println(orderManager.sortByStatus(orderManager.getOrderList()));
+            case 14 -> actionType = ActionType.MAIN_MENU;
+            case 15 -> actionType = ActionType.EXIT;
 
-            case 14 -> {
-                actionType = ActionType.MAIN_MENU;
-            }
-            case 15 -> {
-                actionType = ActionType.EXIT;
-            }
             default -> {
                 actionType = ActionType.BOOK_MENU;
                 printStream.println("Неверный выбор! Попробуйте еще раз");

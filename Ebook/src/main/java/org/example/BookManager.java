@@ -22,28 +22,30 @@ public class BookManager {
     }
 
     public void deleteBook() {
-        Book book = createBook();
-        for (Book item : listBook) {
-            if (item.equals(book)) {
-                if (item.getAmount() < 1) {
-                    printStream.println("### Книг и так уже нет");
-                } else {
-                    item.decrementAmount();
-                    break;
-                }
+        Book tempBook = createBook();
+        Optional<Book> optional = checkExistBook(tempBook);
+
+        if (optional.isPresent()) {
+            Book book = optional.get();
+            if (book.getAmount() == 0) {
+                printStream.println("### Такая книга и так не доступна");
+            } else {
+                book.decrementAmount();
             }
+        } else {
+            printStream.println("### Такой книги нет в библиотеки");
         }
-        printStream.println("### Книга не найденна");
+
     }
 
 
-    public boolean checkExistBook(Book cellBook) {
-        for (Book book : listBook) {
-            if (cellBook.equals(book)) {
-                return true;
+    public Optional<Book> checkExistBook(Book book) {
+        for (Book item : listBook) {
+            if (item.equals(book)) {
+                return Optional.of(item);
             }
         }
-        return false;
+        return Optional.empty();
     }
 
 
@@ -52,17 +54,6 @@ public class BookManager {
     }
 
 
-//    //todo: несколько экземпляров
-//    public void changeStatusBook(Book book) {
-//        for (Book item : listBook) {
-//            if (item.equals(book)) {
-//                item.setStatusBookEnum(StatusBookEnum.AVAILABLE);
-//                printStream.println("# Статус успешно изменен");
-//            }
-//        }
-//
-//    }
-
     public Book createBook() {
         String nameBook;
         String nameAuthor;
@@ -70,18 +61,18 @@ public class BookManager {
         String description;
         Double price;
 
-        printStream.print("Вывведите название книги: ");
+        printStream.print("Введите название книги: ");
         nameBook = scanner.nextLine().trim();
 
-        printStream.print("Вывведите автора книги: ");
+        printStream.print("Введите автора книги: ");
         nameAuthor = scanner.nextLine().trim();
 
         while (true) {
             try {
-                printStream.print("Вывведите дату издания: ");
+                printStream.print("Введите дату издания: ");
                 publishedData = LocalDate.parse(scanner.nextLine().trim());
                 break;
-            } catch (IllegalArgumentException e) {
+            } catch (RuntimeException e) {
                 printStream.println("Дата введена неверно попробуйте еще раз!");
             }
         }

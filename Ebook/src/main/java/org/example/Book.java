@@ -57,6 +57,18 @@ public class Book {
         return Objects.hash(name, author, publishedData, description, price, references, statusBookEnum, lastDeliverDate, lastSelleDate);
     }
 
+    @Override
+    public String toString() {
+        return "Book{" +
+                "name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", publishedData=" + publishedData +
+                ", price=" + price +
+                ", amount=" + amount +
+                ", description=" + description +
+                '}';
+    }
+
     public void incrementAmount() {
         amount++;
     }
@@ -64,4 +76,9 @@ public class Book {
     public void decrementAmount() {
         amount--;
     }
+
+    public void incrementReferences(){
+        references++;
+    }
+
 }
