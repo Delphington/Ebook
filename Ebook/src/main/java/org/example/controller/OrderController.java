@@ -11,11 +11,13 @@ public class OrderController implements Controller {
     private OrderManager orderManager;
     private BookManager bookManager;
     private Manager manager;
+    private RequestBookManager requestBookManager;
 
     public OrderController(Manager manager) {
         this.manager = manager;
         this.orderManager = manager.getOrderManager();
         this.bookManager = manager.getBookManager();
+        this.requestBookManager = manager.getRequestBookManager();
     }
 
 
@@ -60,7 +62,7 @@ public class OrderController implements Controller {
             case 4 -> printList(orderManager.sortByAmount(orderManager.getOrderList()));
 
             //printMenuListBook();
-            case 5 -> RequestBook.printRequestBook();
+            case 5 ->    requestBookManager.printRequestBook();
 
             case 6 -> {
                 Integer indexOrder = getIndexChooseOrder();

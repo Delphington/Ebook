@@ -34,9 +34,9 @@ public class RequestController implements Controller {
         switch (temp) {
             case 1 -> {
                 Integer indexBook = getIndexChooseBook(manager.getBookManager().getListBook());
-                RequestBook.createRequestBook(manager.getBookManager().getListBook().get(indexBook));
+                manager.getRequestBookManager().createRequestBook(manager.getBookManager().getListBook().get(indexBook));
             }
-            case 2 -> printList(RequestBook.getBookRequestSortedReference());
+            case 2 -> printList(manager.getRequestBookManager().getBookRequestSortedReference());
             case 3 -> printStream.println();
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;

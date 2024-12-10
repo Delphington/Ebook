@@ -21,6 +21,8 @@ public class Order {
     private Integer amountBook = 0;
     private List<Book> bookListInOrder;
     private StatusOrderEnum orderStatusEnum;
+    //Todo: плохая зависимость
+    private static RequestBookManager requestBookManager = new RequestBookManager();
 
     public Order() {
         bookListInOrder = new ArrayList<>();
@@ -41,7 +43,7 @@ public class Order {
             System.out.println("### Книги есть! Книга добалвенна");
         } else {
             orderStatusEnum = StatusOrderEnum.NEW;
-            RequestBook.createRequestBook(book);
+            requestBookManager.createRequestBook(book);
             book.incrementReferences();
             System.out.println("### Книги нет! Книга добавленна в запрос");
         }
