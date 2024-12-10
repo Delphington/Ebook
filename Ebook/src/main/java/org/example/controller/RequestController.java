@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.UtilsInput;
 import org.example.model.Book;
 import org.example.model.Manager;
 import org.example.view.RequestBookMenu;
@@ -32,7 +33,7 @@ public class RequestController implements Controller {
     @Override
     public ActionType input() {
         ActionType actionType = ActionType.REQUEST_MENU;
-        int temp = parseStringToInteger();
+        int temp = UtilsInput.getIntegerFromConsole();
         switch (temp) {
             case 1 -> {
                 Integer indexBook = getIndexChooseBook(manager.getBookManager().getListBook());

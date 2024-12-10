@@ -96,7 +96,7 @@ public class OrderController implements Controller {
        orderMenu.showTypeInfoList();
         int choseAction;
         while (true) {
-            choseAction = parseStringToInteger();
+            choseAction = UtilsInput.getIntegerFromConsole();
             if (choseAction >= 1 && choseAction <= 6) {
                 break;
             }

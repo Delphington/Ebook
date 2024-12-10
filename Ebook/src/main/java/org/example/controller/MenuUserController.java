@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.UtilsInput;
 import org.example.model.Manager;
 import org.example.view.MainMenu;
 
@@ -34,7 +35,7 @@ public class MenuUserController implements Controller {
     @Override
     public ActionType input() {
         ActionType actionType = ActionType.MAIN_MENU;
-        int temp = parseStringToInteger();
+        int temp = UtilsInput.getIntegerFromConsole();
         switch (temp) {
             case 1 -> actionType = bookController.run();
             case 2 -> actionType = orderController.run();

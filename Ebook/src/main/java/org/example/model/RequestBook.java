@@ -10,15 +10,12 @@ import java.util.*;
 public class RequestBook {
     private Book book;
     private RequestBookStatus requestBookStatus;
-
-    @Getter
     public static List<RequestBook> requestBookList = new ArrayList<>();
 
     public RequestBook(Book book) {
         this.book = book;
         this.requestBookStatus = RequestBookStatus.OPEN;
     }
-
 
     @Override
     public String toString() {

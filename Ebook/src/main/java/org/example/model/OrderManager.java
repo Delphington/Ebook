@@ -19,6 +19,7 @@ public class OrderManager {
     private RequestBookManager requestBookManager;
     private static final PrintStream printStream = System.out;
     private static final Scanner scanner = new Scanner(System.in);
+
     public OrderManager(List<Order> orderList) {
         this.orderList = orderList;
 
@@ -138,7 +139,6 @@ public class OrderManager {
     }
 
 
-
     public Integer getSelectedOrderIndex() {
         printStream.println("Выбирите какой по счету заказ: ");
         if (orderList.size() == 0) {
@@ -166,10 +166,6 @@ public class OrderManager {
         }
         return number;
     }
-
-
-
-
 
 
     //Количество выполненных заказов

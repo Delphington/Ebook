@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.UtilsInput;
 import org.example.model.Book;
 import org.example.model.BookManager;
 import org.example.model.Manager;
@@ -27,13 +28,12 @@ public class BookController implements Controller {
         }
     }
 
-
     @Override
     public ActionType input() {
         bookMenu.showMenu();
         ActionType actionType = ActionType.BOOK_MENU;
 
-        int choseAction = parseStringToInteger();
+        int choseAction = UtilsInput.getIntegerFromConsole();
 
         switch (choseAction) {
             case 1 -> {
@@ -58,10 +58,10 @@ public class BookController implements Controller {
 
 
     private void printMenuListBook() {
-       bookMenu.showTypeInfoList();
+        bookMenu.showTypeInfoList();
         int choseAction;
         while (true) {
-            choseAction = parseStringToInteger();
+            choseAction = UtilsInput.getIntegerFromConsole();
             if (choseAction >= 1 && choseAction <= 6) {
                 break;
             }

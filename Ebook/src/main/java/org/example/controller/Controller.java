@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.model.Book;
+import org.example.view.Menu;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -12,33 +13,17 @@ public interface Controller {
 
     ActionType input();
 
-
     ActionType run();
-
-    default Integer parseStringToInteger() {
-        Integer temp;
-        while (true) {
-            try {
-                printStream.print("Сделайте выбор: ");
-                String nextLine = scanner.nextLine().trim();
-                temp = Integer.parseInt(nextLine);
-                break;
-            } catch (IllegalArgumentException e) {
-                printStream.println("Неверный выбор! Попробуйте еще раз");
-            }
-        }
-        return temp;
-    }
-
 
 
     default Integer getIndexChooseBook(List<Book> books) {
+        printStream.println("------------------------------------------");
         printStream.println("Выбирите какой по счету книгу для заказа: ");
         for (int i = 0; i < books.size(); i++) {
             printStream.println("[" + (i + 1) + "] " + books.get(i));
         }
 
-        Integer number;
+        int number;
         while (true) {
             try {
                 printStream.print("Введите число: ");
@@ -54,7 +39,4 @@ public interface Controller {
         }
         return number;
     }
-
-
-
 }

@@ -10,5 +10,4 @@ public class MainMenu implements Menu {
         printStream.println("[2] Работа с заказами");
         printStream.println("[3] Работа с запросами");
     }
-
 }

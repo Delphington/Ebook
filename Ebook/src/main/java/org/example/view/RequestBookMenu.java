@@ -1,9 +1,5 @@
 package org.example.view;
 
-import org.example.model.Book;
-
-import java.util.List;
-
 public class RequestBookMenu implements Menu {
     @Override
     public void showMenu() {

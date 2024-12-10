@@ -14,7 +14,6 @@ import java.util.*;
 
 //ID детали заказа
 public class Order {
-    private LocalDate finishDate;
     private LocalDate createDate;
     private LocalDate completedDate;
     private Double amountSum = 0.0d;
@@ -32,7 +31,7 @@ public class Order {
 
     //Если ли бук в листе??
     public void addBook(Book book) {
-        if(orderStatusEnum == StatusOrderEnum.CANCEL){
+        if (orderStatusEnum == StatusOrderEnum.CANCEL) {
             System.out.println("В отмененный заказ нельзя добавить книги!");
             return;
         }
@@ -48,12 +47,6 @@ public class Order {
             System.out.println("### Книги нет! Книга добавленна в запрос");
         }
     }
-
-
-
-
-
-
 
 
     public boolean completedOrder() {
@@ -73,7 +66,7 @@ public class Order {
     }
 
     public void cancelOrder() {
-        finishDate = LocalDate.now();
+        completedDate = LocalDate.now();
         orderStatusEnum = StatusOrderEnum.CANCEL;
     }
 
@@ -83,12 +76,12 @@ public class Order {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Order order = (Order) object;
-        return Objects.equals(finishDate, order.finishDate) && Objects.equals(createDate, order.createDate) && Objects.equals(completedDate, order.completedDate) && Objects.equals(amountSum, order.amountSum) && Objects.equals(amountBook, order.amountBook) && Objects.equals(bookListInOrder, order.bookListInOrder) && orderStatusEnum == order.orderStatusEnum;
+        return Objects.equals(createDate, order.createDate) && Objects.equals(completedDate, order.completedDate) && Objects.equals(amountSum, order.amountSum) && Objects.equals(amountBook, order.amountBook) && Objects.equals(bookListInOrder, order.bookListInOrder) && orderStatusEnum == order.orderStatusEnum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(finishDate, createDate, completedDate, amountSum, amountBook, bookListInOrder, orderStatusEnum);
+        return Objects.hash(createDate, completedDate, amountSum, amountBook, bookListInOrder, orderStatusEnum);
     }
 
 

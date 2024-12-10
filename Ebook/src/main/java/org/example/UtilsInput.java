@@ -54,4 +54,20 @@ public class UtilsInput {
         }
         return LocalDate.of(year, month, day);
     }
+
+
+    public Integer getIntegerFromConsole () {
+        int tempInput;
+        while (true) {
+            try {
+                printStream.print("Сделайте выбор: ");
+                String nextLine = scanner.nextLine().trim();
+                tempInput = Integer.parseInt(nextLine);
+                break;
+            } catch (IllegalArgumentException e) {
+                printStream.println("Неверный выбор! Попробуйте еще раз");
+            }
+        }
+        return tempInput;
+    }
 }

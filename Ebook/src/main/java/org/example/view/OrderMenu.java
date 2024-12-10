@@ -33,6 +33,7 @@ public class OrderMenu implements Menu{
         printStream.println("[6] Вывести количество выполненных заказов за период времени");
     }
 
+    //todo: можно будто бы в интерфейс вынести и делать .super
     @Override
     public void printListObject(List<? extends Object> orders) {
         for (int i = 0; i < orders.size(); i++) {

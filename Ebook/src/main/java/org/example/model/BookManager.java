@@ -42,7 +42,7 @@ public class BookManager {
 
     public Optional<Book> checkExistBook(Book book) {
         for (Book item : listBook) {
-            if (item.equals(book)) {
+            if (item.equalsBook(book)) {
                 return Optional.of(item);
             }
         }
