@@ -9,5 +9,6 @@ public class MainMenu implements Menu {
         printStream.println("[1] Работа с книгами");
         printStream.println("[2] Работа с заказами");
         printStream.println("[3] Работа с запросами");
+        //todo: введите число
     }
 }

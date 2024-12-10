@@ -1,10 +1,8 @@
 package org.example.model;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class RequestBookManager {
 
@@ -37,6 +35,7 @@ public class RequestBookManager {
     public void closeRequest(Book book) {
         for (RequestBook requestBook : RequestBook.requestBookList) {
             if (requestBook.getBook().equalsBook(book)) {
+                book.decrementReferences();
                 requestBook.setRequestBookStatus(RequestBookStatus.CLOSED);
             }
         }
@@ -52,7 +51,7 @@ public class RequestBookManager {
     }
 
 
-    public void printRequestBook() {
+    public void printRequestOpenBook() {
         for (int i = 0; i < RequestBook.requestBookList.size(); i++) {
             if (RequestBook.requestBookList.get(i).getRequestBookStatus() == RequestBookStatus.OPEN) {
                 System.out.println("{" + (i + 1) + "} " + RequestBook.requestBookList.get(i));

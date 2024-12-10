@@ -15,10 +15,11 @@ public class OrderMenu implements Menu{
         printStream.println("[4] Вывести все заказы");
         printStream.println("[5] Вывести книги, на которых запрос");
         printStream.println("[6] Изменить статус заказа");
-        //---
-        printStream.println("[7] Вывести сумму заработанных средств за период времени");
-        printStream.println("[14] Вернуться в главное меню");
-        printStream.println("[15] Выйти из программы");
+        printStream.println("[7] Посмотреть детали заказа");
+        printStream.println("[8] Вывести сумму заработанных средств за период времени");
+        printStream.println("[9] Вывести список заказов");
+        printStream.println("[10] Вернуться в главное меню");
+        printStream.println("[11] Выйти из программы");
         printStream.print("Введите число: ");
     }
 
@@ -28,6 +29,9 @@ public class OrderMenu implements Menu{
         printStream.println("[1] Вывести список заказов (сортировка по дате исполнения)");
         printStream.println("[2] Вывести список заказов (сортировка по цене)");
         printStream.println("[3] Вывести список заказов (сортировка по статусу)");
+
+
+        //Нужно оттестить
         printStream.println("[4] Вывести список выполненных заказов за период времени(сортировка по дате)");
         printStream.println("[5] Вывести список выполненных заказов за период времени(сортировка по цене)");
         printStream.println("[6] Вывести количество выполненных заказов за период времени");

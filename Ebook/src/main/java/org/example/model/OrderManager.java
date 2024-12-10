@@ -20,9 +20,9 @@ public class OrderManager {
     private static final PrintStream printStream = System.out;
     private static final Scanner scanner = new Scanner(System.in);
 
-    public OrderManager(List<Order> orderList) {
-        this.orderList = orderList;
-
+    public OrderManager(RequestBookManager requestBookManager) {
+        orderList = new ArrayList<>();
+        this.requestBookManager = requestBookManager;
     }
 
 
@@ -57,11 +57,6 @@ public class OrderManager {
     }
 
 
-    public OrderManager(RequestBookManager requestBookManager) {
-        orderList = new ArrayList<>();
-        this.requestBookManager = requestBookManager;
-    }
-
     public void createOrder() {
         orderList.add(new Order());
         System.out.println("### Заказ создан!");
@@ -69,7 +64,7 @@ public class OrderManager {
 
     public void cancelOrder(Order order) {
         if (order.getOrderStatusEnum() == StatusOrderEnum.DONE) {
-            System.out.println("Заказ завершен, отменить невозможно!");
+            System.out.println("### Заказ завершен, отменить невозможно!");
         } else {
             order.setOrderStatusEnum(StatusOrderEnum.CANCEL);
             //Закрываем все запросы на книги
@@ -126,17 +121,30 @@ public class OrderManager {
     }
 
 
-    public Integer getCompletedOrderByPrice(LocalDate from, LocalDate to) {
-        int x = 0;
-        for (Order order : orderList) {
-            if ((order.getOrderStatusEnum() == StatusOrderEnum.DONE)
-                    && (order.getCompletedDate().isAfter(from))
-                    && (order.getCompletedDate().isBefore(to))) {
-                x++;
+    public Double calculateCompletedOrderProfit() {
+        double sum = 0;
+        for (Order item : orderList) {
+            if (item.getOrderStatusEnum() == StatusOrderEnum.DONE) {
+                sum += item.getAmountSum();
             }
         }
-        return x;
+        return sum;
     }
+
+
+
+
+    public List<Order> sortByCompletedOrdersBetweenDates(List<Order> orderList, LocalDate from, LocalDate to){
+        return orderList.stream()
+                .filter(order -> order.getOrderStatusEnum() == StatusOrderEnum.DONE)
+                .filter(order -> order.getCompletedDate().isAfter(from) && order.getCompletedDate().isBefore(to))
+                .sorted(Comparator.comparing(Order::getCompletedDate))
+                .toList();
+
+
+    }
+
+
 
 
     public Integer getSelectedOrderIndex() {
@@ -148,8 +156,6 @@ public class OrderManager {
         for (int i = 0; i < orderList.size(); i++) {
             printStream.println("[" + (i + 1) + "] " + orderList.get(i));
         }
-
-
         Integer number;
         while (true) {
             try {

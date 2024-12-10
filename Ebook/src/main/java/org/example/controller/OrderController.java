@@ -5,7 +5,8 @@ import org.example.model.*;
 import org.example.view.OrderMenu;
 
 import java.time.LocalDate;
-
+import java.util.List;
+//todo: клиент
 
 public class OrderController implements Controller {
     private OrderManager orderManager;
@@ -61,26 +62,22 @@ public class OrderController implements Controller {
                 orderTemp.addBook(bookManager.getListBook().get(indexBook));
             }
 
-            case 4 ->  orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
+            case 4 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
 
-            //printMenuListBook();
-            case 5 ->    requestBookManager.printRequestBook();
+            //Вывести книги, на которых запрос
+            case 5 -> requestBookManager.printRequestOpenBook(); //todo rename function
 
             case 6 -> {
+                //Сменить статус
                 Integer indexOrder = orderManager.getSelectedOrderIndex();
                 Order orderTemp = orderManager.getOrderList().get(indexOrder);
                 orderManager.changeStatusOrder(orderTemp, StatusOrderEnum.getChosenOrderStatus());
             }
-
-            case 7 -> {
-                LocalDate localDate1 = UtilsInput.inputDateFromConsole();
-                LocalDate localDate2 = UtilsInput.inputDateFromConsole();
-                orderManager.getCompletedOrderByPrice(localDate1, localDate2);
-
-            }
-
-            case 14 -> actionType = ActionType.MAIN_MENU;
-            case 15 -> actionType = ActionType.EXIT;
+            case 7 -> printStream.println(orderManager.getOrderList().get(orderManager.getSelectedOrderIndex()));
+            case 8 -> printStream.println("Прибыль закрытый заказов: " + orderManager.calculateCompletedOrderProfit());
+            case 9 -> printMenuListBook();
+            case 10 -> actionType = ActionType.MAIN_MENU;
+            case 11 -> actionType = ActionType.EXIT;
 
             default -> {
                 actionType = ActionType.BOOK_MENU;
@@ -91,9 +88,8 @@ public class OrderController implements Controller {
     }
 
 
-
     private void printMenuListBook() {
-       orderMenu.showTypeInfoList();
+        orderMenu.showTypeInfoList();
         int choseAction;
         while (true) {
             choseAction = UtilsInput.getIntegerFromConsole();
@@ -104,18 +100,27 @@ public class OrderController implements Controller {
         }
 
         switch (choseAction) {
+            case 1 -> orderMenu.printListObject(orderManager.sortByCompletedDate(orderManager.getOrderList()));
             case 2 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
+            case 3 -> orderMenu.printListObject(orderManager.sortByStatus(orderManager.getOrderList()));
+            case 4 -> {
+                LocalDate localDate1 = UtilsInput.inputDateFromConsole();
+                LocalDate localDate2 = UtilsInput.inputDateFromConsole();
+                orderMenu.printListObject(orderManager.sortByCompletedOrdersBetweenDates(orderManager.getOrderList(), localDate1, localDate2));
+            }
+            case 5 -> {
+                LocalDate localDate1 = UtilsInput.inputDateFromConsole();
+                LocalDate localDate2 = UtilsInput.inputDateFromConsole();
+                List<Order> list = orderManager.sortByCompletedOrdersBetweenDates(orderManager.getOrderList(), localDate1, localDate2);
+                orderMenu.printListObject(orderManager.sortByAmount(list));
+            }
+            case 6 -> {
+                LocalDate localDate1 = UtilsInput.inputDateFromConsole();
+                LocalDate localDate2 = UtilsInput.inputDateFromConsole();
+                List<Order> list = orderManager.sortByCompletedOrdersBetweenDates(orderManager.getOrderList(), localDate1, localDate2);
+                printStream.println("Количество: " + list.size());
+            }
         }
+
     }
-
 }
-
-
-//Создать заказ
-//2. Отменить заказ
-//3. Посмотреть детали заказа
-//4. Изменить статус заказа
-//10. Вывести количество выполненных заказов за период времени
-//11. Вывести сумму заработанных средств за период времени
-//12. Вернуться в главное меню
-//13. Выйти из программы

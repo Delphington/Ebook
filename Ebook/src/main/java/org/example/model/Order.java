@@ -23,6 +23,18 @@ public class Order {
     //Todo: плохая зависимость
     private static RequestBookManager requestBookManager = new RequestBookManager();
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "createDate=" + createDate +
+                ", completedDate=" + completedDate +
+                ", amountSum=" + amountSum +
+                ", amountBook=" + amountBook +
+                ", bookListInOrder=" + bookListInOrder +
+                ", orderStatusEnum=" + orderStatusEnum +
+                '}';
+    }
+
     public Order() {
         bookListInOrder = new ArrayList<>();
         createDate = LocalDate.now();
@@ -32,10 +44,9 @@ public class Order {
     //Если ли бук в листе??
     public void addBook(Book book) {
         if (orderStatusEnum == StatusOrderEnum.CANCEL) {
-            System.out.println("В отмененный заказ нельзя добавить книги!");
+            System.out.println("### В отмененный заказ нельзя добавить книги!");
             return;
         }
-
         bookListInOrder.add(book);
         amountSum += book.getPrice();
         if (book.getAmount() > 0) {
