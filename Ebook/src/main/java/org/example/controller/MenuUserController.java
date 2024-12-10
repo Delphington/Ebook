@@ -1,6 +1,7 @@
 package org.example.controller;
 
-import org.example.Manager;
+import org.example.model.Manager;
+import org.example.view.MainMenu;
 
 public class MenuUserController implements Controller {
 
@@ -8,18 +9,20 @@ public class MenuUserController implements Controller {
     private OrderController orderController;
     private BookController bookController;
     private Manager manager;
+    private MainMenu mainMenu;
 
     public MenuUserController(Manager manager) {
         this.manager = manager;
         bookController = new BookController(manager);
         orderController = new OrderController(manager);
         requestController = new RequestController(manager);
+        mainMenu = new MainMenu();
     }
 
     @Override
     public ActionType run() {
         while (true) {
-            showMenu();
+            mainMenu.showMenu();
             ActionType actionType = input();
             if (actionType == ActionType.EXIT) {
                 break;
@@ -44,13 +47,4 @@ public class MenuUserController implements Controller {
         return actionType;
     }
 
-    @Override
-    public void showMenu() {
-        printStream.println("==============================");
-        printStream.println("=======    Main menu   =======");
-        printStream.println("==============================");
-        printStream.println("[1] Работа с книгами");
-        printStream.println("[2] Работа с заказами");
-        printStream.println("[3] Работа с запросами");
-    }
 }

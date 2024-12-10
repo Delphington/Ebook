@@ -1,10 +1,10 @@
 package org.example.controller;
 
-import org.example.*;
+import org.example.model.*;
+import org.example.view.OrderMenu;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 
 public class OrderController implements Controller {
@@ -12,12 +12,14 @@ public class OrderController implements Controller {
     private BookManager bookManager;
     private Manager manager;
     private RequestBookManager requestBookManager;
+    private OrderMenu orderMenu;
 
     public OrderController(Manager manager) {
         this.manager = manager;
         this.orderManager = manager.getOrderManager();
         this.bookManager = manager.getBookManager();
         this.requestBookManager = manager.getRequestBookManager();
+        orderMenu = new OrderMenu();
     }
 
 
@@ -33,7 +35,7 @@ public class OrderController implements Controller {
 
     @Override
     public ActionType input() {
-        showMenu();
+        orderMenu.showMenu();
         String nextLine = scanner.nextLine().trim();
         int temp;
         try {
@@ -116,23 +118,6 @@ public class OrderController implements Controller {
             }
         }
         return number;
-    }
-
-
-    @Override
-    public void showMenu() {
-        printStream.println("Выбирите действие с заказами: ");
-        printStream.println("[1] Создать заказ");
-        printStream.println("[2] Отменить заказ"); //отменить
-        printStream.println("[3] Добавить книгу в заказ");
-        printStream.println("[4] Вывести все заказы");
-        printStream.println("[5] Вывести книги, на которых запрос");
-        printStream.println("[6] Изменить статус заказа");
-        //---
-        printStream.println("[7] Вывести сумму заработанных средств за период времени");
-        printStream.println("[14] Вернуться в главное меню");
-        printStream.println("[15] Выйти из программы");
-        printStream.print("Введите число: ");
     }
 
 

@@ -10,6 +10,7 @@ package org.example;
 //
 
 import org.example.controller.MenuUserController;
+import org.example.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

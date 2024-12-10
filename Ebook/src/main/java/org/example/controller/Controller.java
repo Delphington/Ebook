@@ -1,11 +1,9 @@
 package org.example.controller;
 
-import org.example.Book;
-import org.example.Order;
+import org.example.model.Book;
 
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 public interface Controller {
@@ -14,7 +12,6 @@ public interface Controller {
 
     ActionType input();
 
-    void showMenu();
 
     ActionType run();
 

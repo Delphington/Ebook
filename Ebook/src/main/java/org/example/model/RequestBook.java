@@ -1,11 +1,9 @@
-package org.example;
+package org.example.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter

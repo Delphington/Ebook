@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @ToString

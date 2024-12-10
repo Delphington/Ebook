@@ -1,18 +1,21 @@
 package org.example.controller;
 
-import org.example.Book;
-import org.example.BookManager;
-import org.example.Manager;
+import org.example.model.Book;
+import org.example.model.BookManager;
+import org.example.model.Manager;
+import org.example.view.BookMenu;
 
 import java.util.List;
 
 public class BookController implements Controller {
     private BookManager bookManager;
     private Manager manager;
+    private BookMenu bookMenu;
 
     public BookController(Manager manager) {
         this.bookManager = manager.getBookManager();
         this.manager = manager;
+        this.bookMenu = new BookMenu();
     }
 
     @Override
@@ -28,7 +31,7 @@ public class BookController implements Controller {
 
     @Override
     public ActionType input() {
-        showMenu();
+        bookMenu.showMenu();
         ActionType actionType = ActionType.BOOK_MENU;
 
         int choseAction = parseStringToInteger();
@@ -56,15 +59,6 @@ public class BookController implements Controller {
         return actionType;
     }
 
-    //Смена статуса книи, То есть добавление существующий  из писка
-    @Override
-    public void showMenu() {
-        printStream.println("[1] Добавить еще один экземпляр книги");
-        printStream.println("[2] Списать книгу со склада");
-        printStream.println("[3] Вывести список книг");
-        printStream.println("[4] Вернуться в главное меню");
-        printStream.println("[5] Выйти из программы");
-    }
 
     private void printMenuListBook() {
         printStream.println("[1] Вывести список книг библиотеки (сортировка по алфавиту)");
