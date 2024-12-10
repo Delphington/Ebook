@@ -35,8 +35,11 @@ public class BookController implements Controller {
 
         switch (choseAction) {
             case 1 -> {
-                printList(bookManager.sortByName(bookManager.getListBook()));
-                manager.changeAndAddBookStatus();
+                Integer indexBook = getIndexChooseBook(bookManager.getListBook());
+              //  printList(bookManager.sortByName(bookManager.getListBook()));
+
+                Book book = bookManager.getListBook().get(indexBook);
+                manager.changeAndAddBookStatus(book);
             }
             case 2 -> {
                 printList(bookManager.sortByName(bookManager.getListBook()));
@@ -93,4 +96,5 @@ public class BookController implements Controller {
             printStream.println("{" + (i + 1) + "} " + book.get(i));
         }
     }
+
 }

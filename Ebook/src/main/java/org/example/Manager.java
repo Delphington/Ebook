@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 @ToString
@@ -17,10 +16,12 @@ import java.util.Optional;
 public class Manager {
     private BookManager bookManager;
     private OrderManager orderManager;
+    private RequestBookManager requestBookManager;
 
-    public Manager(BookManager bookManager, OrderManager orderManager) {
+    public Manager(BookManager bookManager, OrderManager orderManager, RequestBookManager requestBookManager) {
         this.bookManager = bookManager;
         this.orderManager = orderManager;
+        this.requestBookManager = requestBookManager;
     }
 
 
@@ -37,12 +38,23 @@ public class Manager {
             Book book = optional.get();
 
             //Проверям книгу в Request
-            if(!orderManager.updateRequestList(book)){
+            if (!orderManager.updateRequestList(book)) {
                 book.incrementAmount();
                 orderManager.updateOrderList();
             }
         } else {
             System.out.println("### Ошибка. Такой книги нет!");
+        }
+
+    }
+
+    public void changeAndAddBookStatus(Book book) {
+        //Пользователь задает параметры книги
+
+        //Проверям книгу в Request
+        if (!orderManager.updateRequestList(book)) {
+            book.incrementAmount();
+            orderManager.updateOrderList();
         }
 
     }

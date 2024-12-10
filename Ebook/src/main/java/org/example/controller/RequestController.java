@@ -4,6 +4,8 @@ import org.example.Book;
 import org.example.Manager;
 import org.example.RequestBook;
 
+import java.util.List;
+
 public class RequestController implements Controller {
 
     private Manager manager;
@@ -31,17 +33,10 @@ public class RequestController implements Controller {
         int temp = parseStringToInteger();
         switch (temp) {
             case 1 -> {
-                Book book = manager.getBookManager().createBook();
-                //if(manager.getBookManager().checkExistBook(book)){
-                    //Книга есть
-
-
-                //}
-
-
-                RequestBook.createRequestBook(book);
+                Integer indexBook = getIndexChooseBook(manager.getBookManager().getListBook());
+                RequestBook.createRequestBook(manager.getBookManager().getListBook().get(indexBook));
             }
-            case 2 -> printStream.println();
+            case 2 -> printList(RequestBook.getBookRequestSortedReference());
             case 3 -> printStream.println();
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;
@@ -63,5 +58,11 @@ public class RequestController implements Controller {
         printStream.println("[3] Вывести список запросов на книги (сортировка по цене)");
         printStream.println("[4] Вернуться в главное меню");
         printStream.println("[5] Выйти из программы");
+    }
+
+    private void printList(List<Book> book) {
+        for (int i = 0; i < book.size(); i++) {
+            printStream.println("{" + (i + 1) + "} " + book.get(i) + ", reference = " +book.get(i).getReferences());
+        }
     }
 }

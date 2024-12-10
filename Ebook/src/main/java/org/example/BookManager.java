@@ -89,7 +89,7 @@ public class BookManager {
             }
         }
         return new Book(nameBook, nameAuthor, publishedData,
-                description, price, StatusBookEnum.AVAILABLE);
+                description, price, 1);
     }
 
 

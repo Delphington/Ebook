@@ -3,9 +3,11 @@ package org.example;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @ToString
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 public class OrderManager {
 
     private List<Order> orderList;
+    private RequestBookManager requestBookManager;
 
     public OrderManager(List<Order> orderList) {
         this.orderList = orderList;
@@ -25,7 +28,7 @@ public class OrderManager {
         for (RequestBook requestBook : RequestBook.requestBookList) {
             if (requestBook.getBook().equalsBook(book)) {
                 requestBook.setRequestBookStatus(RequestBookStatus.CLOSED);
-                book.incrementAmount();
+                book.decrementReferences();
                 System.out.println("Был изменен одина книга");
                 updateOrderList();
                 return true;
@@ -51,16 +54,30 @@ public class OrderManager {
     }
 
 
-    public OrderManager() {
+    public OrderManager(RequestBookManager requestBookManager) {
         orderList = new ArrayList<>();
+        this.requestBookManager = requestBookManager;
     }
 
     public void createOrder() {
         orderList.add(new Order());
-        System.out.println("## Заказ создан!");
+        System.out.println("### Заказ создан!");
     }
 
     public void cancelOrder(Order order) {
+        if (order.getOrderStatusEnum() == StatusOrderEnum.DONE) {
+            System.out.println("Заказ завершен, отменить невозможно!");
+        } else {
+            order.setOrderStatusEnum(StatusOrderEnum.CANCEL);
+            //Закрываем все запросы на книги
+            for (Book book : order.getBookListInOrder()) {
+                if (book.getAmount() == 0) {
+                    requestBookManager.closeRequest(book);
+                }
+            }
+        }
+
+
         for (Order item : orderList) {
             if (item.equals(order)) {
                 order.cancelOrder();
@@ -81,19 +98,42 @@ public class OrderManager {
         }
         System.out.println("Не найден заказ!");
     }
-//
-//    public List<RequestBook> getListRequestBooks(List<Order> orders) {
-//        List<RequestBook> requestBookList = new ArrayList<>();
-//        for (Order item : orders) {
-//            List<RequestBook> temp = item.getRequestBookList();
-//            for (RequestBook itemTemp : temp) {
-//                if (itemTemp.getRequestBookStatus() == RequestBookStatus.OPEN) {
-//                    requestBookList.add(itemTemp);
-//                }
-//            }
-//        }
-//        return requestBookList;
-//    }
+
+
+    //Меняем статус книги
+    public void changeStatusOrder(Order order, StatusOrderEnum statusOrderEnum) {
+        if (order.getOrderStatusEnum() == statusOrderEnum
+                || statusOrderEnum == StatusOrderEnum.NEW) {
+            System.out.println("### Такой статус не имеет смысла присваивать");
+            return;
+        }
+        //Книга в статусе new - то есть книга в заказ
+        //и присваиваем Done cancel
+        if (order.getOrderStatusEnum() == StatusOrderEnum.NEW) {
+            //Закрываем все запросы
+            for (Book itemBook : order.getBookListInOrder()) {
+                if (itemBook.getAmount() == 0) {
+                    requestBookManager.closeRequest(itemBook);
+                }
+            }
+        }
+        //Это для любого статусу
+        order.setOrderStatusEnum(statusOrderEnum);
+        System.out.println("### Cтатус установленн");
+    }
+
+
+    public Integer getCompletedOrderByPrice(LocalDate from, LocalDate to) {
+        int x = 0;
+        for (Order order : orderList) {
+            if ((order.getOrderStatusEnum() == StatusOrderEnum.DONE)
+                    && (order.getCompletedDate().isAfter(from))
+                    && (order.getCompletedDate().isBefore(to))) {
+                x++;
+            }
+        }
+        return x;
+    }
 
 
     //Количество выполненных заказов
@@ -107,11 +147,6 @@ public class OrderManager {
         return orderList.stream().filter(order -> order.getOrderStatusEnum().equals(status))
                 .collect(Collectors.toList());
     }
-
-    //Меняем статус книги
-//    public void changeStatusOrder(Order order, StatusOrderEnum statusOrderEnum){
-//        order.setOrderStatusEnum(statusOrderEnum);
-//    }
 
 
     public List<Order> sortByAmount(List<Order> orders) {

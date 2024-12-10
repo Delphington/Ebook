@@ -22,13 +22,13 @@ public class Book {
     private LocalDate lastSelleDate;
 
 
-    public Book(String name, String author, LocalDate publishedData, String description, Double price, StatusBookEnum statusBookEnum) {
+    public Book(String name, String author, LocalDate publishedData, String description, Double price, Integer amount) {
         this.name = name;
         this.author = author;
         this.publishedData = publishedData;
         this.price = price;
         this.description = description;
-        this.statusBookEnum = statusBookEnum;
+        this.amount = amount;
         this.lastDeliverDate  = LocalDate.now();
     }
 
@@ -79,6 +79,10 @@ public class Book {
 
     public void incrementReferences(){
         references++;
+    }
+
+    public void decrementReferences(){
+        references--;
     }
 
 }

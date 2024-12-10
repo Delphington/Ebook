@@ -30,15 +30,20 @@ public class Order {
 
     //Если ли бук в листе??
     public void addBook(Book book) {
+        if(orderStatusEnum == StatusOrderEnum.CANCEL){
+            System.out.println("В отмененный заказ нельзя добавить книги!");
+            return;
+        }
+
         bookListInOrder.add(book);
         amountSum += book.getPrice();
-        if (book.getStatusBookEnum() == StatusBookEnum.AVAILABLE) {
-            System.out.println("Книги есть! Книга добалвенна");
+        if (book.getAmount() > 0) {
+            System.out.println("### Книги есть! Книга добалвенна");
         } else {
             orderStatusEnum = StatusOrderEnum.NEW;
             RequestBook.createRequestBook(book);
             book.incrementReferences();
-            System.out.println("Книги нет! Книга добавленна в запрос");
+            System.out.println("### Книги нет! Книга добавленна в запрос");
         }
     }
 
@@ -77,4 +82,6 @@ public class Order {
     public int hashCode() {
         return Objects.hash(finishDate, createDate, completedDate, amountSum, amountBook, bookListInOrder, orderStatusEnum);
     }
+
+
 }
