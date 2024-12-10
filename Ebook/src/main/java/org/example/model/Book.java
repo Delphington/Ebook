@@ -57,15 +57,32 @@ public class Book {
         return Objects.hash(name, author, publishedData, description, price, references, statusBookEnum, lastDeliverDate, lastSelleDate);
     }
 
+//    @Override
+//    public String toString() {
+//        return "Book{" +
+//                "name='" + name + '\'' +
+//                ", author='" + author + '\'' +
+//                ", publishedData=" + publishedData +
+//                ", price=" + price +
+//                ", amount=" + amount +
+//                ", description=" + description +
+//                '}';
+//    }
+
+
     @Override
     public String toString() {
         return "Book{" +
                 "name='" + name + '\'' +
                 ", author='" + author + '\'' +
                 ", publishedData=" + publishedData +
+                ", description='" + description + '\'' +
                 ", price=" + price +
                 ", amount=" + amount +
-                ", description=" + description +
+                ", statusBookEnum=" + statusBookEnum +
+                ", references=" + references +
+                ", lastDeliverDate=" + lastDeliverDate +
+                ", lastSelleDate=" + lastSelleDate +
                 '}';
     }
 

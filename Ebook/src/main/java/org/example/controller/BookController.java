@@ -42,16 +42,15 @@ public class BookController implements Controller {
                 manager.changeAndAddBookStatus(book);
             }
             case 2 -> {
-                bookMenu.printListObject(bookManager.sortByName(bookManager.getListBook()));
-                bookManager.deleteBook();
+                Integer indexBook = getIndexChooseBook(bookManager.getListBook());
+                Book book = bookManager.getListBook().get(indexBook);
+                bookManager.deleteBook(book);
             }
             case 3 -> printMenuListBook();
             case 4 -> actionType = ActionType.MAIN_MENU;
             case 5 -> actionType = ActionType.EXIT;
-            default -> {
-                actionType = ActionType.BOOK_MENU;
-                bookMenu.showErrorInput();
-            }
+            default -> bookMenu.showErrorInput();
+
         }
         return actionType;
     }
@@ -69,11 +68,14 @@ public class BookController implements Controller {
         }
 
         switch (choseAction) {
-            case 1 -> bookMenu.printListObject(bookManager.sortByName(bookManager.getListBook()));
-            case 2 -> bookMenu.printListObject(bookManager.sortByDate(bookManager.getListBook()));
+            case 1 -> bookMenu.printListObject(bookManager.sortByNameBook(bookManager.getListBook()));
+            case 2 -> bookMenu.printListObject(bookManager.sortByDatePublished(bookManager.getListBook()));
             case 3 -> bookMenu.printListObject(bookManager.sorByPrice(bookManager.getListBook()));
-            case 4 -> bookMenu.printListObject(bookManager.sortByStatus(bookManager.getListBook()));
-            case 5 -> bookMenu.printListObject(bookManager.getStaleBook(bookManager.getListBook()));
+            case 4 -> bookMenu.printListObject(bookManager.sortByAmount(bookManager.getListBook()));
+            case 5 ->
+                    bookMenu.printListObject(bookManager.sortByDeliverDate(bookManager.getStaleBook(bookManager.getListBook())));
+            case 6 ->
+                    bookMenu.printListObject(bookManager.sorByPrice(bookManager.getStaleBook(bookManager.getListBook())));
         }
     }
 }

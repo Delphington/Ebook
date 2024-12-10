@@ -25,29 +25,6 @@ public class Manager {
     }
 
 
-    public void changeAndAddBookStatus() {
-        //Пользователь задает параметры книги
-        Book tempbook = bookManager.createBook();
-        log.info("Создана книга " + tempbook);
-
-        //Книга есть в библиотеки
-        Optional<Book> optional = bookManager.checkExistBook(tempbook);
-
-        if (optional.isPresent()) {
-            //Получили именно ту книгу, которая лежит в библиотеки
-            Book book = optional.get();
-
-            //Проверям книгу в Request
-            if (!orderManager.updateRequestList(book)) {
-                book.incrementAmount();
-                orderManager.updateOrderList();
-            }
-        } else {
-            System.out.println("### Ошибка. Такой книги нет!");
-        }
-
-    }
-
     public void changeAndAddBookStatus(Book book) {
         //Пользователь задает параметры книги
 

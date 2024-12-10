@@ -13,8 +13,8 @@ public class UtilsInput {
 
     public static LocalDate inputDateFromConsole() {
         int year;
-        int month;
-        int day;
+        short month;
+        short day;
         while (true) {
             printStream.print("Введите год: ");
             try {
@@ -31,7 +31,7 @@ public class UtilsInput {
         while (true) {
             printStream.print("Введите месяц: ");
             try {
-                month = Integer.parseInt(scanner.nextLine().trim());
+                month = Short.parseShort(scanner.nextLine().trim());
                 if (month > 0 && month < 13) {
                     break;
                 }
@@ -43,7 +43,7 @@ public class UtilsInput {
         while (true) {
             printStream.print("Введите день: ");
             try {
-                day = Integer.parseInt(scanner.nextLine().trim());
+                day = Short.parseShort(scanner.nextLine().trim());
                 if (day > 0 && day < 32) {
                     break;
                 }
@@ -56,7 +56,7 @@ public class UtilsInput {
     }
 
 
-    public Integer getIntegerFromConsole () {
+    public Integer getIntegerFromConsole() {
         int tempInput;
         while (true) {
             try {
