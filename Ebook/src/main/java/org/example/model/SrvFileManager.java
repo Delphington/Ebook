@@ -5,9 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 
 public interface SrvFileManager {
     String FILE_TO_WRITE = "src/main/resources/info.csv";
+    String DEFAULT_DELIMITER = "=";
 
 
     void writeToFile();
@@ -22,5 +24,11 @@ public interface SrvFileManager {
             System.err.println("Error clearing file: " + e.getMessage());
             return false;
         }
+    }
+    default Optional<String[]> getParseLine(String input) {
+        if (input == null || input.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(input.split(DEFAULT_DELIMITER));
     }
 }

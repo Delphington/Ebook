@@ -1,6 +1,5 @@
 package org.example.model;
 
-import lombok.SneakyThrows;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public interface DataObjExporter {
-    String DEFAULT_DELIMITER = ";";
+    String DEFAULT_DELIMITER = "=";
 
 
     String generateString();
@@ -37,4 +36,5 @@ public interface DataObjExporter {
         }
         return true;
     }
+
 }

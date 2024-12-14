@@ -3,11 +3,13 @@ package org.example.model;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 @Setter
-
 public class Book implements DataObjExporter {
     private int ID;
 
@@ -18,7 +20,7 @@ public class Book implements DataObjExporter {
     private Double price;
 
     private Integer amount = 1;
-    private StatusBookEnum statusBookEnum; //В наличие или не в наличии
+    private StatusBookEnum statusBookEnum = StatusBookEnum.AVAILABLE; //В наличие или не в наличии
     private Integer references = 0; //Сколько раз заказывали книгу
     private LocalDate lastDeliverDate;
     private LocalDate lastSelleDate;
@@ -26,7 +28,7 @@ public class Book implements DataObjExporter {
 
     private static int counterID = 1;
 
-
+    //конструтор для обчного создания
     public Book(String name, String author, LocalDate publishedData, String description, Double price, Integer amount) {
         this.name = name;
         this.author = author;
@@ -39,11 +41,29 @@ public class Book implements DataObjExporter {
         counterID++;
     }
 
+
+    //Конструктор для парсинга
+    public Book(int ID, String name, String author, LocalDate publishedData,
+                String description, Double price, Integer amount,
+                StatusBookEnum statusBookEnum, Integer references,
+                LocalDate lastDeliverDate, LocalDate lastSelleDate) {
+        this.ID = ID;
+        this.name = name;
+        this.author = author;
+        this.publishedData = publishedData;
+        this.description = description;
+        this.price = price;
+        this.amount = amount;
+        this.statusBookEnum = statusBookEnum;
+        this.references = references;
+        this.lastDeliverDate = lastDeliverDate;
+        this.lastSelleDate = lastSelleDate;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        Book book = (Book) object;
         return ID == ((Book) object).getID();
     }
 
