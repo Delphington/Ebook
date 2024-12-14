@@ -25,10 +25,16 @@ public class Main {
         BookManager bookManager = new BookManager(books);
         RequestBookManager requestBookManager = new RequestBookManager();
         OrderManager orderManager = new OrderManager(requestBookManager);
+        orderManager.createOrder();
+        orderManager.createOrder();
         Manager manager = new Manager(bookManager, orderManager,requestBookManager);
 
         MenuUserController menuUserController = new MenuUserController(manager);
-        menuUserController.run();
+        //menuUserController.run();
+
+
+        manager.getOrderManager().writeToFile();
+
     }
 }
 

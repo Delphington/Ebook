@@ -34,7 +34,7 @@ public class RequestBookManager {
 
     public void closeRequest(Book book) {
         for (RequestBook requestBook : RequestBook.requestBookList) {
-            if (requestBook.getBook().equalsBook(book)) {
+            if (requestBook.getBook().equals(book)) {
                 book.decrementReferences();
                 requestBook.setRequestBookStatus(RequestBookStatus.CLOSED);
             }

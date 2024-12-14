@@ -1,6 +1,7 @@
 package org.example.model;
 
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 
-public class BookManager {
+public class BookManager implements SrvFileManager {
     @Getter
     private List<Book> listBook;
     private final PrintStream printStream = System.out;
@@ -25,6 +26,24 @@ public class BookManager {
         } else {
             book.decrementAmount();
         }
+    }
+
+    @Override
+    public void writeToFile() {
+        if (!clearFile(FILE_TO_WRITE)) {
+            printStream.println("### Ошибка очистки файла файлами");
+            return;
+        }
+
+        for (int i = 0; i < listBook.size(); i++) {
+            try {
+                listBook.get(i).writeDate(FILE_TO_WRITE);
+            } catch (RuntimeException | IOException e) {
+                printStream.println("### Запись не произошла! ");
+                return;
+            }
+        }
+        printStream.println("### Успешно все записалось в файл!");
     }
 
 

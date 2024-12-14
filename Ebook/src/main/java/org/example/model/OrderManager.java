@@ -3,6 +3,7 @@ package org.example.model;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 @ToString
 @Getter
-public class OrderManager {
+public class OrderManager implements SrvFileManager{
 
     private List<Order> orderList;
     private RequestBookManager requestBookManager;
@@ -29,7 +30,7 @@ public class OrderManager {
     //Обновляем реквесты добавление новой книги
     public boolean updateRequestList(Book book) {
         for (RequestBook requestBook : RequestBook.requestBookList) {
-            if (requestBook.getBook().equalsBook(book)) {
+            if (requestBook.getBook().equals(book)) {
                 requestBook.setRequestBookStatus(RequestBookStatus.CLOSED);
                 book.decrementReferences();
                 System.out.println("Был изменен одина книга");
@@ -215,4 +216,21 @@ public class OrderManager {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void writeToFile() {
+        if (!clearFile(FILE_TO_WRITE)) {
+            printStream.println("### Ошибка очистки файла файлами");
+            return;
+        }
+
+        for (int i = 0; i < orderList.size(); i++) {
+            try {
+                orderList.get(i).writeDate(FILE_TO_WRITE);
+            } catch (RuntimeException | IOException e) {
+                printStream.println("### Запись не произошла! ");
+                return;
+            }
+        }
+        printStream.println("### Успешно все записалось в файл!");
+    }
 }

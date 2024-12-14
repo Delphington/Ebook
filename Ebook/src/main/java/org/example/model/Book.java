@@ -8,7 +8,9 @@ import java.util.Objects;
 @Getter
 @Setter
 
-public class Book {
+public class Book implements DataObjExporter {
+    private int ID;
+
     private final String name;
     private final String author;
     private final LocalDate publishedData;
@@ -22,6 +24,9 @@ public class Book {
     private LocalDate lastSelleDate;
 
 
+    private static int counterID = 1;
+
+
     public Book(String name, String author, LocalDate publishedData, String description, Double price, Integer amount) {
         this.name = name;
         this.author = author;
@@ -29,27 +34,17 @@ public class Book {
         this.price = price;
         this.description = description;
         this.amount = amount;
-        this.lastDeliverDate  = LocalDate.now();
+        this.lastDeliverDate = LocalDate.now();
+        ID = counterID;
+        counterID++;
     }
-
-    public boolean equalsBook(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        Book book = (Book) object;
-        return Objects.equals(name, book.getName())
-                && Objects.equals(publishedData, book.publishedData)
-                && Objects.equals(description, book.description)
-                && Objects.equals(price, price);
-    }
-
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Book book = (Book) object;
-        return Objects.equals(name, book.name) && Objects.equals(author, book.author) && Objects.equals(publishedData, book.publishedData) && Objects.equals(description, book.description) && Objects.equals(price, book.price) && Objects.equals(references, book.references) && statusBookEnum == book.statusBookEnum && Objects.equals(lastDeliverDate, book.lastDeliverDate) && Objects.equals(lastSelleDate, book.lastSelleDate);
+        return ID == ((Book) object).getID();
     }
 
     @Override
@@ -57,33 +52,21 @@ public class Book {
         return Objects.hash(name, author, publishedData, description, price, references, statusBookEnum, lastDeliverDate, lastSelleDate);
     }
 
-//    @Override
-//    public String toString() {
-//        return "Book{" +
-//                "name='" + name + '\'' +
-//                ", author='" + author + '\'' +
-//                ", publishedData=" + publishedData +
-//                ", price=" + price +
-//                ", amount=" + amount +
-//                ", description=" + description +
-//                '}';
-//    }
-
-
     @Override
     public String toString() {
         return "Book{" +
-                "name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                ", publishedData=" + publishedData +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", amount=" + amount +
-                ", statusBookEnum=" + statusBookEnum +
-                ", references=" + references +
-                ", lastDeliverDate=" + lastDeliverDate +
-                ", lastSelleDate=" + lastSelleDate +
-                '}';
+               "ID='" + ID + '\'' +
+               "name='" + name + '\'' +
+               ", author='" + author + '\'' +
+               ", publishedData=" + publishedData +
+               ", description='" + description + '\'' +
+               ", price=" + price +
+               ", amount=" + amount +
+               ", statusBookEnum=" + statusBookEnum +
+               ", references=" + references +
+               ", lastDeliverDate=" + lastDeliverDate +
+               ", lastSelleDate=" + lastSelleDate +
+               '}';
     }
 
     public void incrementAmount() {
@@ -94,12 +77,30 @@ public class Book {
         amount--;
     }
 
-    public void incrementReferences(){
+    public void incrementReferences() {
         references++;
     }
 
-    public void decrementReferences(){
+    public void decrementReferences() {
         references--;
     }
 
+
+    @Override
+    public String generateString() {
+        StringBuilder temp = new StringBuilder();
+        //    ID:name:author:publishedData:description:price:amount:statusBookEnum:references:lastDeliverDate:lastSelleDate;
+        temp.append(ID).append(DEFAULT_DELIMITER);
+        temp.append(name).append(DEFAULT_DELIMITER);
+        temp.append(author).append(DEFAULT_DELIMITER);
+        temp.append(publishedData).append(DEFAULT_DELIMITER);
+        temp.append(description).append(DEFAULT_DELIMITER);
+        temp.append(price).append(DEFAULT_DELIMITER);
+        temp.append(amount).append(DEFAULT_DELIMITER);
+        temp.append(statusBookEnum).append(DEFAULT_DELIMITER);
+        temp.append(references).append(DEFAULT_DELIMITER);
+        temp.append(lastDeliverDate).append(DEFAULT_DELIMITER);
+        temp.append(lastSelleDate).append("\n");
+        return temp.toString();
+    }
 }

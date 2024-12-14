@@ -8,6 +8,8 @@ import java.util.*;
 @Getter
 @Setter
 public class RequestBook {
+    private int ID = 0;
+    private static int counterID = 1;
     private Book book;
     private RequestBookStatus requestBookStatus;
     public static List<RequestBook> requestBookList = new ArrayList<>();
@@ -15,13 +17,16 @@ public class RequestBook {
     public RequestBook(Book book) {
         this.book = book;
         this.requestBookStatus = RequestBookStatus.OPEN;
+        ID = counterID;
+        counterID++;
     }
 
     @Override
     public String toString() {
         return "RequestBook{" +
-                "book=" + book +
-                ", requestBookStatus=" + requestBookStatus +
-                '}';
+               "ID=" +ID +
+               ", book=" + book +
+               ", requestBookStatus=" + requestBookStatus +
+               '}';
     }
 }
