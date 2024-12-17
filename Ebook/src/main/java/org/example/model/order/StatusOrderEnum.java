@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.model.order;
 
 import static org.example.controller.Controller.scanner;
 

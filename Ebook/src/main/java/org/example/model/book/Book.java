@@ -1,6 +1,7 @@
-package org.example.model;
+package org.example.model.book;
 
 import lombok.*;
+import org.example.model.DataObjExporter;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -8,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Book implements DataObjExporter {
-    private int ID;
+    private final long ID;
 
     private final String name;
     private final String author;
@@ -40,7 +41,7 @@ public class Book implements DataObjExporter {
 
 
     //Конструктор для парсинга
-    public Book(int ID, String name, String author, LocalDate publishedData,
+    public Book(long ID, String name, String author, LocalDate publishedData,
                 String description, Double price, Integer amount,
                 StatusBookEnum statusBookEnum, Integer references,
                 LocalDate lastDeliverDate, LocalDate lastSelleDate) {
@@ -66,7 +67,7 @@ public class Book implements DataObjExporter {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, author, publishedData, description, price, references, statusBookEnum, lastDeliverDate, lastSelleDate);
+        return Objects.hash(ID);
     }
 
     @Override
@@ -102,6 +103,10 @@ public class Book implements DataObjExporter {
         references--;
     }
 
+
+    public String generateTitle(){
+        return "ID;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
+    }
 
     @Override
     public String generateString() {

@@ -1,8 +1,8 @@
 package org.example.controller;
 
 import org.example.UtilsInput;
-import org.example.model.Book;
-import org.example.model.BookManager;
+import org.example.model.book.Book;
+import org.example.model.book.BookManager;
 import org.example.model.Manager;
 import org.example.view.BookMenu;
 

@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.model.book;
 
 
 import java.io.BufferedReader;
@@ -11,13 +11,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import org.example.model.SrvFileManager;
 
 
 public class BookManager implements SrvFileManager {
 
     private final PrintStream printStream = System.out;
     @Getter
-    private Map<Integer, Book> mapBooks = new HashMap<>();
+    private Map<Long, Book> mapBooks = new TreeMap<>();
     @Getter
     private List<Book> listBook;
 
@@ -36,22 +37,31 @@ public class BookManager implements SrvFileManager {
         }
     }
 
+
+    // -------------------- Работа с файлами -------------------------------
     @Override
     public void writeToFile() {
-        if (!clearFile(FILE_TO_WRITE)) {
+        if (!clearFile(EXPORT_FILE_BOOK)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
         }
 
-        for (Map.Entry<Integer, Book> map : mapBooks.entrySet()) {
+        boolean flag = true;
+
+        for (Map.Entry<Long, Book> map : mapBooks.entrySet()) {
             try {
-                map.getValue().writeDate(FILE_TO_WRITE);
+                //Логика записывания заголовка
+                if (flag) {
+                    String title = map.getValue().generateTitle();
+                    map.getValue().writeTitle(EXPORT_FILE_BOOK, title);
+                    flag = false;
+                }
+                map.getValue().writeDate(EXPORT_FILE_BOOK);
             } catch (RuntimeException | IOException e) {
                 printStream.println("### Запись не произошла! ");
                 return;
             }
         }
-
         printStream.println("### Успешно все записалось в файл!");
     }
 
@@ -60,12 +70,18 @@ public class BookManager implements SrvFileManager {
         Optional<String[]> optional = getParseLine(input);
         if (optional.isPresent()) {
             String[] arr = optional.get();
+            //MAGIC NUMBER -  количество полей
             if (arr.length != 11) {
                 return Optional.empty();
             }
 
             try {
-                Integer ID = Integer.parseInt(arr[0]);
+                Long ID = Long.parseLong(arr[0]);
+
+                if (mapBooks.get(ID) == null) {
+                    //Нет книги такой
+                    return Optional.empty();
+                }
                 String name = arr[1];
                 String author = arr[2];
                 LocalDate publishedDate = LocalDate.parse(arr[3]);
@@ -98,10 +114,11 @@ public class BookManager implements SrvFileManager {
 
 
     public void readFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_TO_WRITE))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Optional<Book> optional = getParseBook(line);
+
                 if (optional.isPresent()) {
                     Book book = optional.get();
                     mapBooks.put(book.getID(), book);
@@ -110,6 +127,16 @@ public class BookManager implements SrvFileManager {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
+    }
+
+    //-------------------------------------------------------------
+
+    public List<Book> generateList() {
+        listBook.clear();
+        for (Map.Entry<Long, Book> map : mapBooks.entrySet()) {
+            listBook.add(map.getValue());
+        }
+        return listBook;
     }
 
 

@@ -1,12 +1,9 @@
 package org.example.controller;
 
 import org.example.UtilsInput;
-import org.example.model.Book;
 import org.example.model.Manager;
-import org.example.model.RequestBookManager;
+import org.example.model.request.RequestBookManager;
 import org.example.view.RequestBookMenu;
-
-import java.util.List;
 
 public class RequestController implements Controller {
 

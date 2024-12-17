@@ -5,10 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Optional;
 
 public interface SrvFileManager {
-    String FILE_TO_WRITE = "src/main/resources/info.csv";
+    String EXPORT_FILE_BOOK = "src/main/resources/export/exportBooks.csv";
+    String IMPORT_FILE_BOOK = "src/main/resources/import/importBooks.csv";
+
+    String FILE_TO_WRITE_ORDER = "src/main/resources/export/exportOrders.csv";
+
     String DEFAULT_DELIMITER = "=";
 
 
@@ -25,10 +30,12 @@ public interface SrvFileManager {
             return false;
         }
     }
+
     default Optional<String[]> getParseLine(String input) {
         if (input == null || input.isEmpty()) {
             return Optional.empty();
         }
+
         return Optional.of(input.split(DEFAULT_DELIMITER));
     }
 }

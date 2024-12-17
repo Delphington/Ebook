@@ -1,7 +1,12 @@
-package org.example.model;
+package org.example.model.order;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.example.model.*;
+import org.example.model.book.Book;
+import org.example.model.request.RequestBook;
+import org.example.model.request.RequestBookManager;
+import org.example.model.request.RequestBookStatus;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -14,7 +19,7 @@ import java.util.stream.Collectors;
 
 @ToString
 @Getter
-public class OrderManager implements SrvFileManager{
+public class OrderManager implements SrvFileManager {
 
     private List<Order> orderList;
     private RequestBookManager requestBookManager;
@@ -218,14 +223,14 @@ public class OrderManager implements SrvFileManager{
 
     @Override
     public void writeToFile() {
-        if (!clearFile(FILE_TO_WRITE)) {
+        if (!clearFile(FILE_TO_WRITE_ORDER)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
         }
 
         for (int i = 0; i < orderList.size(); i++) {
             try {
-                orderList.get(i).writeDate(FILE_TO_WRITE);
+                orderList.get(i).writeDate(FILE_TO_WRITE_ORDER);
             } catch (RuntimeException | IOException e) {
                 printStream.println("### Запись не произошла! ");
                 return;

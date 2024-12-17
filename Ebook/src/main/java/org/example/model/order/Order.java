@@ -1,8 +1,11 @@
-package org.example.model;
+package org.example.model.order;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.example.model.DataObjExporter;
+import org.example.model.request.RequestBookManager;
+import org.example.model.book.Book;
 
 import java.time.LocalDate;
 import java.util.*;

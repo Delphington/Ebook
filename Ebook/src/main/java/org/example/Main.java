@@ -4,6 +4,10 @@ package org.example;
 import lombok.experimental.UtilityClass;
 import org.example.controller.MenuUserController;
 import org.example.model.*;
+import org.example.model.book.Book;
+import org.example.model.book.BookManager;
+import org.example.model.order.OrderManager;
+import org.example.model.request.RequestBookManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,13 +36,18 @@ public class Main {
         MenuUserController menuUserController = new MenuUserController(manager);
         //menuUserController.run();
 
-        //  manager.getBookManager().writeToFile();
-        System.out.println(manager.getBookManager().getMapBooks());
+          manager.getBookManager().writeToFile();
+
+        for(Book book : manager.getBookManager().getListBook()){
+            System.out.println(book);
+        }
+
         System.out.println("--------------------");
         manager.getBookManager().readFromFile();
 
-        System.out.println("--------------------");
-        System.out.println(manager.getBookManager().getMapBooks());
+        for(Book book : manager.getBookManager().generateList()){
+            System.out.println(book);
+        }
     }
 }
 

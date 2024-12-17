@@ -1,7 +1,6 @@
 package org.example.controller;
 
-import org.example.model.Book;
-import org.example.view.Menu;
+import org.example.model.book.Book;
 
 import java.io.PrintStream;
 import java.util.List;
