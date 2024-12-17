@@ -14,11 +14,12 @@ import lombok.Getter;
 
 
 public class BookManager implements SrvFileManager {
-    @Getter
-    private List<Book> listBook;
+
     private final PrintStream printStream = System.out;
     @Getter
     private Map<Integer, Book> mapBooks = new HashMap<>();
+    @Getter
+    private List<Book> listBook;
 
     public BookManager(List<Book> listBook) {
         this.listBook = listBook;
@@ -42,14 +43,15 @@ public class BookManager implements SrvFileManager {
             return;
         }
 
-        for (int i = 0; i < listBook.size(); i++) {
+        for (Map.Entry<Integer, Book> map : mapBooks.entrySet()) {
             try {
-                listBook.get(i).writeDate(FILE_TO_WRITE);
+                map.getValue().writeDate(FILE_TO_WRITE);
             } catch (RuntimeException | IOException e) {
                 printStream.println("### Запись не произошла! ");
                 return;
             }
         }
+
         printStream.println("### Успешно все записалось в файл!");
     }
 

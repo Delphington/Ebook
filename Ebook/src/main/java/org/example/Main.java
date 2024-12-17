@@ -33,7 +33,7 @@ public class Main {
         //menuUserController.run();
 
         //  manager.getBookManager().writeToFile();
-        System.out.println(manager.getBookManager().getListBook());
+        System.out.println(manager.getBookManager().getMapBooks());
         System.out.println("--------------------");
         manager.getBookManager().readFromFile();
 
