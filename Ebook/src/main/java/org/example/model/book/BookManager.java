@@ -25,7 +25,7 @@ public class BookManager implements SrvFileManager {
     public BookManager(List<Book> listBook) {
         this.listBook = listBook;
         for (int i = 0; i < listBook.size(); i++) {
-            mapBooks.put(listBook.get(i).getID(), listBook.get(i));
+            mapBooks.put(listBook.get(i).getId(), listBook.get(i));
         }
     }
 
@@ -42,7 +42,7 @@ public class BookManager implements SrvFileManager {
     // -------------------- Работа с файлами -------------------------------
     public Optional<Book> findById(Long id) {
         for (Book book : listBook) {
-            if (book.getID().equals(id)) {
+            if (book.getId().equals(id)) {
                 return Optional.of(book);
             }
         }
@@ -52,7 +52,7 @@ public class BookManager implements SrvFileManager {
 
 
     @Override
-    public void writeToFile() {
+    public void exportAll() {
         if (!clearFile(EXPORT_FILE_BOOK)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
@@ -125,7 +125,7 @@ public class BookManager implements SrvFileManager {
     }
 
     @Override
-    public void readFromFile() {
+    public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -133,7 +133,7 @@ public class BookManager implements SrvFileManager {
 
                 if (optional.isPresent()) {
                     Book book = optional.get();
-                    mapBooks.put(book.getID(), book);
+                    mapBooks.put(book.getId(), book);
                 }
             }
         } catch (IOException e) {

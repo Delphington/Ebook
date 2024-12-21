@@ -11,6 +11,5 @@ public interface Menu {
         printStream.println("Неверный ввод! Попробуйте еще раз!");
     }
     default void printListObject(List<? extends Object> V){
-
     };
 }

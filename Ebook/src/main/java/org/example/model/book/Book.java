@@ -1,15 +1,15 @@
 package org.example.model.book;
 
-import lombok.*;
-import org.example.model.DataObjExporter;
-
+import lombok.Getter;
+import lombok.Setter;
+import org.example.model.SrvWriterExporter;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class Book implements DataObjExporter {
-    private final Long ID;
+public class Book implements SrvWriterExporter {
+    private final Long id;
 
     private final String name;
     private final String author;
@@ -35,17 +35,17 @@ public class Book implements DataObjExporter {
         this.description = description;
         this.amount = amount;
         this.lastDeliverDate = LocalDate.now();
-        ID = counterID;
+        id = counterID;
         counterID++;
     }
 
 
     //Конструктор для парсинга
-    public Book(long ID, String name, String author, LocalDate publishedData,
+    public Book(Long ID, String name, String author, LocalDate publishedData,
                 String description, Double price, Integer amount,
                 StatusBookEnum statusBookEnum, Integer references,
                 LocalDate lastDeliverDate, LocalDate lastSelleDate) {
-        this.ID = ID;
+        this.id = ID;
         this.name = name;
         this.author = author;
         this.publishedData = publishedData;
@@ -62,19 +62,19 @@ public class Book implements DataObjExporter {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        Book book = (Book) object;
-        return ID != null && (ID.equals(book.getID()));
+        Book bookTemp = (Book) object;
+        return Objects.equals(id, bookTemp.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Book{" +
-               "ID='" + ID + '\'' +
+               "ID='" + id + '\'' +
                "name='" + name + '\'' +
                ", author='" + author + '\'' +
                ", publishedData=" + publishedData +
@@ -104,12 +104,13 @@ public class Book implements DataObjExporter {
         references--;
     }
 
+    //-------------------------- Для работы с файлами -------------------------------
 
     @Override
     public String generateString() {
         StringBuilder temp = new StringBuilder();
         //    ID:name:author:publishedData:description:price:amount:statusBookEnum:references:lastDeliverDate:lastSelleDate;
-        temp.append(ID).append(DEFAULT_DELIMITER);
+        temp.append(id).append(DEFAULT_DELIMITER);
         temp.append(name).append(DEFAULT_DELIMITER);
         temp.append(author).append(DEFAULT_DELIMITER);
         temp.append(publishedData).append(DEFAULT_DELIMITER);
@@ -123,9 +124,10 @@ public class Book implements DataObjExporter {
         return temp.toString();
     }
 
-
     @Override
     public String generateTitle(){
         return "ID;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
     }
+
+
 }

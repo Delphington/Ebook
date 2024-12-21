@@ -2,14 +2,14 @@ package org.example.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.DataObjExporter;
+import org.example.model.SrvWriterExporter;
 import org.example.model.book.Book;
 
 import java.util.*;
 
 @Getter
 @Setter
-public class RequestBook implements DataObjExporter {
+public class RequestBook implements SrvWriterExporter {
     private Long id;
     private static long counterID = 1;
     private Book book;
@@ -46,7 +46,7 @@ public class RequestBook implements DataObjExporter {
     public String generateString() {
         StringBuilder temp = new StringBuilder();
         temp.append(id).append(DEFAULT_DELIMITER);
-        temp.append(book.getID()).append(DEFAULT_DELIMITER);
+        temp.append(book.getId()).append(DEFAULT_DELIMITER);
         temp.append(requestBookStatus).append("\n");
         return temp.toString();
     }

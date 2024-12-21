@@ -60,7 +60,7 @@ public class Main {
             System.out.println(requestBook);
         }
         System.out.println("-----------------------------------");
-        requestBookManager.readFromFile();
+        requestBookManager.importAll();
         for (RequestBook requestBook : RequestBook.requestBookList) {
             System.out.println(requestBook);
         }

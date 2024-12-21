@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public interface DataObjExporter {
-    String DEFAULT_DELIMITER = "=";
+public interface SrvWriterExporter {
+    String DEFAULT_DELIMITER = ";";
 
     String generateString();
 

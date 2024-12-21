@@ -86,7 +86,7 @@ public class RequestBookManager implements SrvFileManager {
 
 
     @Override
-    public void writeToFile() {
+    public void exportAll() {
         if (!clearFile(EXPORT_FILE_REQUEST_BOOK)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
@@ -111,7 +111,7 @@ public class RequestBookManager implements SrvFileManager {
     }
 
     @Override
-    public void readFromFile() {
+    public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_REQUEST_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -119,9 +119,9 @@ public class RequestBookManager implements SrvFileManager {
                 if (optionalRequestBookFromFile.isPresent()) {
                     RequestBook requestBookFromFile = optionalRequestBookFromFile.get();
                     Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId());
-                    if(requestBookOptional.isPresent()){
+                    if (requestBookOptional.isPresent()) {
                         requestBookOptional.get().of(requestBookFromFile);
-                    }else{
+                    } else {
                         //добавляем
                         addRequestBook(requestBookFromFile);
                     }

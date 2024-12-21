@@ -3,7 +3,7 @@ package org.example.model.order;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.example.model.DataObjExporter;
+import org.example.model.SrvWriterExporter;
 import org.example.model.request.RequestBookManager;
 import org.example.model.book.Book;
 
@@ -16,7 +16,7 @@ import java.util.*;
 
 
 //ID детали заказа
-public class Order implements DataObjExporter {
+public class Order implements SrvWriterExporter {
     private Long id;
     private LocalDate createDate;
     private LocalDate completedDate;
@@ -128,7 +128,7 @@ public class Order implements DataObjExporter {
         temp.append(orderStatusEnum).append(DEFAULT_DELIMITER);
 
         for (int i = 0; i < bookListInOrder.size(); i++) {
-            temp.append(bookListInOrder.get(i).getID());
+            temp.append(bookListInOrder.get(i).getId());
             if (i != bookListInOrder.size() - 1) {
                 temp.append(DEFAULT_DELIMITER);
             } else {

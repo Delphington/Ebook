@@ -185,7 +185,7 @@ public class OrderManager implements SrvFileManager {
 
 
     @Override
-    public void writeToFile() {
+    public void exportAll() {
         if (!clearFile(EXPORT_FILE_ORDER)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
@@ -210,7 +210,7 @@ public class OrderManager implements SrvFileManager {
     }
 
     @Override
-    public void readFromFile() {
+    public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_ORDER))) {
             String line;
             while ((line = reader.readLine()) != null) {

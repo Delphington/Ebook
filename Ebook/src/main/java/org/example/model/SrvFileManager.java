@@ -18,14 +18,12 @@ public interface SrvFileManager {
     String EXPORT_FILE_REQUEST_BOOK = "src/main/resources/export/exportRequests.csv";
     String IMPORT_FILE_REQUEST_BOOK = "src/main/resources/import/importRequests.csv";
 
-
-
-    String DEFAULT_DELIMITER = "=";
+    String DEFAULT_DELIMITER = ";";
 
     PrintStream printStream = System.out;
 
-    void writeToFile();
-    void readFromFile();
+    void exportAll();
+    void importAll();
 
     default boolean clearFile(String filePath) {
         Path path = Paths.get(filePath);
@@ -42,7 +40,6 @@ public interface SrvFileManager {
         if (input == null || input.isEmpty()) {
             return Optional.empty();
         }
-
         return Optional.of(input.split(DEFAULT_DELIMITER));
     }
 }
