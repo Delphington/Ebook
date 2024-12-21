@@ -4,3 +4,4 @@ ID;name;author;publishedData;description;price;amount;statusBookEnum;references;
 3=3A=3B=1949-06-08=3=103.0=2=AVAILABLE=0=2024-12-17=null
 4=4A=4B=1960-07-11=4=104.0=0=AVAILABLE=0=2024-12-17=null
 5=5A=5B=1925-04-10=5=105.0=1=AVAILABLE=0=2024-12-17=null
+ID:createDate:completedDate:amountSum:amountBook: bookListInOrder:orderStatusEnum

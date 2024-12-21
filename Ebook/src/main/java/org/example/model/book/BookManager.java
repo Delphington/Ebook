@@ -38,7 +38,19 @@ public class BookManager implements SrvFileManager {
     }
 
 
+
     // -------------------- Работа с файлами -------------------------------
+    public Optional<Book> findById(Long id) {
+        for (Book book : listBook) {
+            if (book.getID().equals(id)) {
+                return Optional.of(book);
+            }
+        }
+        return Optional.empty();
+    }
+
+
+
     @Override
     public void writeToFile() {
         if (!clearFile(EXPORT_FILE_BOOK)) {
@@ -112,7 +124,7 @@ public class BookManager implements SrvFileManager {
         return Optional.empty();
     }
 
-
+    @Override
     public void readFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;

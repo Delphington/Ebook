@@ -6,6 +6,7 @@ import org.example.controller.MenuUserController;
 import org.example.model.*;
 import org.example.model.book.Book;
 import org.example.model.book.BookManager;
+import org.example.model.order.Order;
 import org.example.model.order.OrderManager;
 import org.example.model.request.RequestBookManager;
 
@@ -28,7 +29,7 @@ public class Main {
 
         BookManager bookManager = new BookManager(books);
         RequestBookManager requestBookManager = new RequestBookManager();
-        OrderManager orderManager = new OrderManager(requestBookManager);
+        OrderManager orderManager = new OrderManager(requestBookManager, bookManager);
 //        orderManager.createOrder();
 //        orderManager.createOrder();
         Manager manager = new Manager(bookManager, orderManager, requestBookManager);
@@ -36,18 +37,54 @@ public class Main {
         MenuUserController menuUserController = new MenuUserController(manager);
         //menuUserController.run();
 
-          manager.getBookManager().writeToFile();
 
-        for(Book book : manager.getBookManager().getListBook()){
+        manager.getOrderManager().createOrder();
+        manager.getOrderManager().createOrder();
+        manager.getOrderManager().createOrder();
+        manager.getOrderManager().getOrderList().get(0).addBook(books.get(0));
+        manager.getOrderManager().getOrderList().get(0).addBook(books.get(2));
+        manager.getOrderManager().getOrderList().get(1).addBook(books.get(1));
+
+
+//        manager.getOrderManager().writeToFile();
+
+
+        System.out.println("==========Все книги=================");
+        for(Book book :  manager.getBookManager().getListBook()){
             System.out.println(book);
         }
 
-        System.out.println("--------------------");
-        manager.getBookManager().readFromFile();
 
-        for(Book book : manager.getBookManager().generateList()){
-            System.out.println(book);
+        for(Order order :  manager.getOrderManager().getOrderList()){
+            System.out.println(order);
         }
+
+        System.out.println("-------------------------------------------");
+
+
+        manager.getOrderManager().readFromFile();
+
+
+        for(Order order :  manager.getOrderManager().getOrderList()){
+            System.out.println(order);
+        }
+
+
+
+
+        //Тесты для книг
+//        manager.getBookManager().writeToFile();
+//
+//        for(Book book : manager.getBookManager().getListBook()){
+//            System.out.println(book);
+//        }
+//
+//        System.out.println("--------------------");
+//        manager.getBookManager().readFromFile();
+//
+//        for(Book book : manager.getBookManager().generateList()){
+//            System.out.println(book);
+//        }
     }
 }
 

@@ -4,17 +4,18 @@ import lombok.Getter;
 import lombok.ToString;
 import org.example.model.*;
 import org.example.model.book.Book;
+import org.example.model.book.BookManager;
+import org.example.model.book.StatusBookEnum;
 import org.example.model.request.RequestBook;
 import org.example.model.request.RequestBookManager;
 import org.example.model.request.RequestBookStatus;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ToString
@@ -25,10 +26,13 @@ public class OrderManager implements SrvFileManager {
     private RequestBookManager requestBookManager;
     private static final PrintStream printStream = System.out;
     private static final Scanner scanner = new Scanner(System.in);
+    private BookManager bookManager;
 
-    public OrderManager(RequestBookManager requestBookManager) {
+
+    public OrderManager(RequestBookManager requestBookManager, BookManager bookManager) {
         orderList = new ArrayList<>();
         this.requestBookManager = requestBookManager;
+        this.bookManager = bookManager;
     }
 
 
@@ -61,7 +65,6 @@ public class OrderManager implements SrvFileManager {
             }
         }
     }
-
 
     public void createOrder() {
         orderList.add(new Order());
@@ -107,7 +110,7 @@ public class OrderManager implements SrvFileManager {
     //Меняем статус книги
     public void changeStatusOrder(Order order, StatusOrderEnum statusOrderEnum) {
         if (order.getOrderStatusEnum() == statusOrderEnum
-                || statusOrderEnum == StatusOrderEnum.NEW) {
+            || statusOrderEnum == StatusOrderEnum.NEW) {
             System.out.println("### Такой статус не имеет смысла присваивать");
             return;
         }
@@ -138,21 +141,6 @@ public class OrderManager implements SrvFileManager {
     }
 
 
-
-
-    public List<Order> sortByCompletedOrdersBetweenDates(List<Order> orderList, LocalDate from, LocalDate to){
-        return orderList.stream()
-                .filter(order -> order.getOrderStatusEnum() == StatusOrderEnum.DONE)
-                .filter(order -> order.getCompletedDate().isAfter(from) && order.getCompletedDate().isBefore(to))
-                .sorted(Comparator.comparing(Order::getCompletedDate))
-                .toList();
-
-
-    }
-
-
-
-
     public Integer getSelectedOrderIndex() {
         printStream.println("Выбирите какой по счету заказ: ");
         if (orderList.size() == 0) {
@@ -179,6 +167,151 @@ public class OrderManager implements SrvFileManager {
         return number;
     }
 
+    // --------------------- Работа с файлами --------------------------------
+
+    private void addOrder(Order order) {
+        orderList.add(order);
+    }
+
+
+    public Optional<Order> findById(Long id) {
+        for (Order order : orderList) {
+            if (order.getId().equals(id)) {
+                return Optional.of(order);
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    @Override
+    public void writeToFile() {
+        if (!clearFile(EXPORT_FILE_ORDER)) {
+            printStream.println("### Ошибка очистки файла файлами");
+            return;
+        }
+
+        boolean flag = true;
+
+        for (int i = 0; i < orderList.size(); i++) {
+            try {
+                if (flag) {
+                    String title = orderList.get(i).generateTitle();
+                    orderList.get(i).writeTitle(EXPORT_FILE_ORDER, title);
+                    flag = false;
+                }
+                orderList.get(i).writeDate(EXPORT_FILE_ORDER);
+            } catch (RuntimeException | IOException e) {
+                printStream.println("### Запись не произошла! ");
+                return;
+            }
+        }
+        printStream.println("### Успешно все записалось в файл!");
+    }
+
+    @Override
+    public void readFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_ORDER))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Optional<Order> optional = getParseOrder(line);
+                if (optional.isPresent()) {
+                    Order importOrder = optional.get();
+                    Optional<Order> optionalOrder = findById(importOrder.getId());
+                    if (optionalOrder.isPresent()) {
+                        Order item = optionalOrder.get();
+                        item.of(importOrder);
+
+//                        System.out.println("****************************************");
+//                        System.out.println("в базе: " + item);
+//                        System.out.println("Из файла: " + importOrder);
+//                        System.out.println("****************************************");
+                    } else {
+                        addOrder(importOrder);
+                    }
+
+                } else {
+                    System.out.println("### Заказ не считался");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+
+    private Optional<Order> getParseOrder(String input) {
+        //ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N
+        Optional<String[]> optional = getParseLine(input);
+        if (optional.isPresent()) {
+            String[] arr = optional.get();
+
+            System.out.println("%%%: " +Arrays.toString(arr));
+
+            //Минимальное количество для заказа (без книг)
+            if (arr.length < 5) {
+                return Optional.empty();
+            }
+
+            Long id = null;
+            LocalDate createDate = null;
+            LocalDate completedDate = null;
+            Double amountSum = null;
+            StatusOrderEnum orderStatusEnum = null;
+            try {
+                id = Long.parseLong(arr[0]);
+                createDate = LocalDate.parse(arr[1]);
+                try{
+                    completedDate = LocalDate.parse(arr[2]);
+                }catch (RuntimeException e){
+                  //  System.out.println("### ComplectedDate is NULL");
+                }
+                amountSum = Double.parseDouble(arr[3]);
+                orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
+            } catch (RuntimeException e) {
+                System.err.println("Ошибка: преобразование объекта");
+                return Optional.empty();
+            }
+
+            Order order = new Order(id, createDate, completedDate, amountSum, orderStatusEnum);
+
+
+
+            for (int i = 5; i < arr.length; i++) {
+                Long bookId = null;
+                try {
+                    bookId = Long.parseLong(arr[i]);
+                } catch (RuntimeException e) {
+                    //todo: выкинуть свой Exception
+                    System.err.println("### Не верное преобразование айди книги");
+                }
+
+                if (bookId != null) {
+                    Optional<Book> optionalBook = bookManager.findById(bookId);
+                    if (optionalBook.isPresent()) {
+                        order.addBook(optionalBook.get());
+                    } else {
+                        System.err.println("### Такой книги нет в библио");
+                    }
+                }
+            }
+            return Optional.of(order);
+        }
+
+        return Optional.empty();
+    }
+
+
+    // --------------- Сортировки --------------------------
+
+
+    public List<Order> sortByCompletedOrdersBetweenDates(List<Order> orderList, LocalDate from, LocalDate to) {
+        return orderList.stream()
+                .filter(order -> order.getOrderStatusEnum() == StatusOrderEnum.DONE)
+                .filter(order -> order.getCompletedDate().isAfter(from) && order.getCompletedDate().isBefore(to))
+                .sorted(Comparator.comparing(Order::getCompletedDate))
+                .toList();
+    }
 
     //Количество выполненных заказов
     public List<Order> getCompletedOrder(List<Order> orderList) {
@@ -221,21 +354,5 @@ public class OrderManager implements SrvFileManager {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void writeToFile() {
-        if (!clearFile(FILE_TO_WRITE_ORDER)) {
-            printStream.println("### Ошибка очистки файла файлами");
-            return;
-        }
 
-        for (int i = 0; i < orderList.size(); i++) {
-            try {
-                orderList.get(i).writeDate(FILE_TO_WRITE_ORDER);
-            } catch (RuntimeException | IOException e) {
-                printStream.println("### Запись не произошла! ");
-                return;
-            }
-        }
-        printStream.println("### Успешно все записалось в файл!");
-    }
 }

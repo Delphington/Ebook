@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Book implements DataObjExporter {
-    private final long ID;
+    private final Long ID;
 
     private final String name;
     private final String author;
@@ -24,7 +24,7 @@ public class Book implements DataObjExporter {
     private LocalDate lastSelleDate;
 
 
-    private static int counterID = 1;
+    private static long counterID = 1;
 
     //конструтор для обчного создания
     public Book(String name, String author, LocalDate publishedData, String description, Double price, Integer amount) {
@@ -62,7 +62,8 @@ public class Book implements DataObjExporter {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        return ID == ((Book) object).getID();
+        Book book = (Book) object;
+        return ID != null && (ID.equals(book.getID()));
     }
 
     @Override
@@ -104,10 +105,6 @@ public class Book implements DataObjExporter {
     }
 
 
-    public String generateTitle(){
-        return "ID;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
-    }
-
     @Override
     public String generateString() {
         StringBuilder temp = new StringBuilder();
@@ -124,5 +121,11 @@ public class Book implements DataObjExporter {
         temp.append(lastDeliverDate).append(DEFAULT_DELIMITER);
         temp.append(lastSelleDate).append("\n");
         return temp.toString();
+    }
+
+
+    @Override
+    public String generateTitle(){
+        return "ID;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
     }
 }

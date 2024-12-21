@@ -17,37 +17,34 @@ import java.util.*;
 
 //ID детали заказа
 public class Order implements DataObjExporter {
-    private int ID;
+    private Long id;
     private LocalDate createDate;
     private LocalDate completedDate;
     private Double amountSum = 0.0d;
-    private Integer amountBook = 0;
     private List<Book> bookListInOrder;
     private StatusOrderEnum orderStatusEnum;
 
-    private static int counterID = 1;
+    private static long counterID = 1;
     private static RequestBookManager requestBookManager = new RequestBookManager();
 
-    @Override
-    public String toString() {
-        return "Order{" +
-               "ID=" + ID +
-               ", createDate=" + createDate +
-               ", completedDate=" + completedDate +
-               ", amountSum=" + amountSum +
-               ", amountBook=" + amountBook +
-               ", bookListInOrder=" + bookListInOrder +
-               ", orderStatusEnum=" + orderStatusEnum +
-               '}';
-    }
 
     public Order() {
         bookListInOrder = new ArrayList<>();
         createDate = LocalDate.now();
         orderStatusEnum = StatusOrderEnum.DONE;
-        ID = counterID;
+        id = counterID;
         counterID++;
     }
+
+    public Order(Long id, LocalDate createDate, LocalDate completedDate, Double amountSum, StatusOrderEnum statusOrderEnum) {
+        bookListInOrder = new ArrayList<>();
+        this.id = id;
+        this.createDate = createDate;
+        this.completedDate = completedDate;
+        this.amountSum = amountSum;
+        this.orderStatusEnum = orderStatusEnum;
+    }
+
 
     //Если ли бук в листе??
     public void addBook(Book book) {
@@ -89,28 +86,62 @@ public class Order implements DataObjExporter {
         orderStatusEnum = StatusOrderEnum.CANCEL;
     }
 
+    public void of(Order order) {
+        id = order.getId();
+        createDate = order.getCreateDate();
+        completedDate = order.getCompletedDate();
+        amountSum = order.getAmountSum();
+        bookListInOrder = order.getBookListInOrder();
+        orderStatusEnum = order.getOrderStatusEnum();
+    }
+
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
 
-        return ID == ((Order) object).getID();
+        return id == ((Order) object).getId();
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+               "ID=" + id +
+               ", createDate=" + createDate +
+               ", completedDate=" + completedDate +
+               ", amountSum=" + amountSum +
+               ", amountBook=" + bookListInOrder.size() +
+               ", bookListInOrder=" + bookListInOrder +
+               ", orderStatusEnum=" + orderStatusEnum +
+               '}';
+    }
 
+    //------------- Для работы с файлами
     @Override
     public String generateString() {
         StringBuilder temp = new StringBuilder();
-        temp.append(ID).append(DEFAULT_DELIMITER);
+        temp.append(id).append(DEFAULT_DELIMITER);
         temp.append(createDate).append(DEFAULT_DELIMITER);
         temp.append(completedDate).append(DEFAULT_DELIMITER);
         temp.append(amountSum).append(DEFAULT_DELIMITER);
-        temp.append(amountBook).append(DEFAULT_DELIMITER);
-        temp.append(bookListInOrder).append(DEFAULT_DELIMITER);
-        temp.append(orderStatusEnum).append('\n');
-        return temp.toString();
+        temp.append(orderStatusEnum).append(DEFAULT_DELIMITER);
 
-        //ID:createDate:completedDate:amountSum:amountBook: bookListInOrder:orderStatusEnum;
+        for (int i = 0; i < bookListInOrder.size(); i++) {
+            temp.append(bookListInOrder.get(i).getID());
+            if (i != bookListInOrder.size() - 1) {
+                temp.append(DEFAULT_DELIMITER);
+            } else {
+                temp.append("\n");
+            }
+
+        }
+
+        return temp.toString();
+    }
+
+    @Override
+    public String generateTitle() {
+        return "ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N\n";
     }
 }

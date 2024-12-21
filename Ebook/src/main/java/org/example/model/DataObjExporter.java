@@ -11,8 +11,9 @@ import java.nio.file.StandardOpenOption;
 public interface DataObjExporter {
     String DEFAULT_DELIMITER = "=";
 
-
     String generateString();
+
+    String generateTitle();
 
     default boolean writeDate(String strPath) throws IOException {
         Path path = Paths.get(strPath);
@@ -27,7 +28,6 @@ public interface DataObjExporter {
             }
         }
 
-
         try (BufferedWriter writer = Files.newBufferedWriter(path,
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             writer.write(generateString()); // Используем BufferedWriter
@@ -37,6 +37,7 @@ public interface DataObjExporter {
         }
         return true;
     }
+
 
     default boolean writeTitle(String strPath, String title) {
         Path path = Paths.get(strPath);
@@ -51,7 +52,6 @@ public interface DataObjExporter {
             }
         }
 
-
         try (BufferedWriter writer = Files.newBufferedWriter(path,
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
             writer.write(title); // Используем BufferedWriter
@@ -61,6 +61,4 @@ public interface DataObjExporter {
         }
         return true;
     }
-
-
 }
