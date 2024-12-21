@@ -117,7 +117,7 @@ public class Order implements DataObjExporter {
                '}';
     }
 
-    //------------- Для работы с файлами
+    //------------- Для работы с файлами -------------------------------
     @Override
     public String generateString() {
         StringBuilder temp = new StringBuilder();

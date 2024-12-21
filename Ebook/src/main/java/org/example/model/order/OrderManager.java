@@ -275,8 +275,6 @@ public class OrderManager implements SrvFileManager {
 
             Order order = new Order(id, createDate, completedDate, amountSum, orderStatusEnum);
 
-
-
             for (int i = 5; i < arr.length; i++) {
                 Long bookId = null;
                 try {
@@ -353,6 +351,4 @@ public class OrderManager implements SrvFileManager {
                 .sorted(Comparator.comparing(Order::getOrderStatusEnum).reversed())
                 .collect(Collectors.toList());
     }
-
-
 }

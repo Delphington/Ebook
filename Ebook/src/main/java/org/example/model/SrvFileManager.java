@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,9 +15,14 @@ public interface SrvFileManager {
     String EXPORT_FILE_ORDER = "src/main/resources/export/exportOrders.csv";
     String IMPORT_FILE_ORDER = "src/main/resources/import/importOrders.csv";
 
+    String EXPORT_FILE_REQUEST_BOOK = "src/main/resources/export/exportRequests.csv";
+    String IMPORT_FILE_REQUEST_BOOK = "src/main/resources/import/importRequests.csv";
+
+
 
     String DEFAULT_DELIMITER = "=";
 
+    PrintStream printStream = System.out;
 
     void writeToFile();
     void readFromFile();
