@@ -2,18 +2,18 @@ package org.example.model.book;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.SrvWriterExporter;
+import org.example.model.SrvExporter;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class Book implements SrvWriterExporter {
+public class Book implements SrvExporter {
     private final Long id;
-
-    private final String name;
-    private final String author;
-    private final LocalDate publishedData;
+    private String name;
+    private String author;
+    private LocalDate publishedData;
     private String description;
     private Double price;
 
@@ -41,11 +41,11 @@ public class Book implements SrvWriterExporter {
 
 
     //Конструктор для парсинга
-    public Book(Long ID, String name, String author, LocalDate publishedData,
+    public Book(Long id, String name, String author, LocalDate publishedData,
                 String description, Double price, Integer amount,
                 StatusBookEnum statusBookEnum, Integer references,
                 LocalDate lastDeliverDate, LocalDate lastSelleDate) {
-        this.id = ID;
+        this.id = id;
         this.name = name;
         this.author = author;
         this.publishedData = publishedData;
@@ -104,12 +104,26 @@ public class Book implements SrvWriterExporter {
         references--;
     }
 
+
+
+    public void copyOf(Book book){
+        this.name = book.name;
+        this.author = book.author;
+        this.publishedData = book.publishedData;
+        this.description = book.description;
+        this.price = book.price;
+        this.amount = book.amount;
+        this.references = book.references;
+        this.lastDeliverDate = book.lastDeliverDate;
+        this.lastSelleDate = book.lastSelleDate;
+    }
+
+
     //-------------------------- Для работы с файлами -------------------------------
 
     @Override
-    public String generateString() {
+    public String generateInfoObject() {
         StringBuilder temp = new StringBuilder();
-        //    ID:name:author:publishedData:description:price:amount:statusBookEnum:references:lastDeliverDate:lastSelleDate;
         temp.append(id).append(DEFAULT_DELIMITER);
         temp.append(name).append(DEFAULT_DELIMITER);
         temp.append(author).append(DEFAULT_DELIMITER);
@@ -125,9 +139,7 @@ public class Book implements SrvWriterExporter {
     }
 
     @Override
-    public String generateTitle(){
-        return "ID;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
+    public String generateTitle() {
+        return "id;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
     }
-
-
 }

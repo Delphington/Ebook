@@ -2,8 +2,7 @@ package org.example.model.order;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-import org.example.model.SrvWriterExporter;
+import org.example.model.SrvExporter;
 import org.example.model.request.RequestBookManager;
 import org.example.model.book.Book;
 
@@ -12,11 +11,8 @@ import java.util.*;
 
 @Getter
 @Setter
-@ToString
-
-
 //ID детали заказа
-public class Order implements SrvWriterExporter {
+public class Order implements SrvExporter {
     private Long id;
     private LocalDate createDate;
     private LocalDate completedDate;
@@ -119,7 +115,7 @@ public class Order implements SrvWriterExporter {
 
     //------------- Для работы с файлами -------------------------------
     @Override
-    public String generateString() {
+    public String generateInfoObject() {
         StringBuilder temp = new StringBuilder();
         temp.append(id).append(DEFAULT_DELIMITER);
         temp.append(createDate).append(DEFAULT_DELIMITER);
@@ -136,7 +132,6 @@ public class Order implements SrvWriterExporter {
             }
 
         }
-
         return temp.toString();
     }
 

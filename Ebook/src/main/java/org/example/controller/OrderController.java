@@ -61,10 +61,11 @@ public class OrderController implements Controller {
             }
             //отмена заказа
             case 3 -> {
-                Integer indexBook = getIndexChooseBook(bookManager.getListBook());
-                Integer indexOrder = orderManager.getSelectedOrderIndex();
-                Order orderTemp = orderManager.getOrderList().get(indexOrder);
-                orderTemp.addBook(bookManager.getListBook().get(indexBook));
+                //TODO: ##
+//                LONG indexBook = getIndexChooseBook(bookManager.getMapBooks());
+//                Integer indexOrder = orderManager.getSelectedOrderIndex();
+//                Order orderTemp = orderManager.getOrderList().get(indexOrder);
+//                orderTemp.addBook(bookManager.getListBook().get(indexBook));
             }
 
             case 4 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));

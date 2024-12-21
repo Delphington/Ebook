@@ -37,18 +37,27 @@ public class BookController implements Controller {
 
         switch (choseAction) {
             case 1 -> {
-                Integer indexBook = getIndexChooseBook(bookManager.getListBook());
-                Book book = bookManager.getListBook().get(indexBook);
+                Long id = getIdChooseBook(bookManager.getMapBooks());
+                Book book = bookManager.getMapBooks().get(id);
                 manager.changeAndAddBookStatus(book);
             }
             case 2 -> {
-                Integer indexBook = getIndexChooseBook(bookManager.getListBook());
-                Book book = bookManager.getListBook().get(indexBook);
-                bookManager.deleteBook(book);
+                Long id = getIdChooseBook(bookManager.getMapBooks());
+                bookManager.deleteBook(id);
             }
             case 3 -> printMenuListBook();
-            case 4 -> actionType = ActionType.MAIN_MENU;
-            case 5 -> actionType = ActionType.EXIT;
+            case 4 -> bookManager.exportModel(getIdChooseBook(bookManager.getMapBooks()));
+            case 5 -> bookManager.exportAll();
+            case 6 -> {
+                bookManager.printAllFile(manager.IMPORT_FILE_BOOK);
+                Long id = getScannerNumber();
+                bookManager.importModel(id);
+            }
+            case 7 -> bookManager.importAll();
+
+
+            case 8 -> actionType = ActionType.MAIN_MENU;
+            case 9 -> actionType = ActionType.EXIT;
             default -> bookMenu.showErrorInput();
 
         }
@@ -68,14 +77,13 @@ public class BookController implements Controller {
         }
 
         switch (choseAction) {
-            case 1 -> bookMenu.printListObject(bookManager.sortByNameBook(bookManager.getListBook()));
-            case 2 -> bookMenu.printListObject(bookManager.sortByDatePublished(bookManager.getListBook()));
-            case 3 -> bookMenu.printListObject(bookManager.sorByPrice(bookManager.getListBook()));
-            case 4 -> bookMenu.printListObject(bookManager.sortByAmount(bookManager.getListBook()));
+            case 2 -> bookMenu.printListObject(bookManager.sortByDatePublished(bookManager.updateListBook()));
+            case 3 -> bookMenu.printListObject(bookManager.sorByPrice(bookManager.updateListBook()));
+            case 4 -> bookMenu.printListObject(bookManager.sortByAmount(bookManager.updateListBook()));
             case 5 ->
-                    bookMenu.printListObject(bookManager.sortByDeliverDate(bookManager.getStaleBook(bookManager.getListBook())));
+                    bookMenu.printListObject(bookManager.sortByDeliverDate(bookManager.getStaleBook(bookManager.updateListBook())));
             case 6 ->
-                    bookMenu.printListObject(bookManager.sorByPrice(bookManager.getStaleBook(bookManager.getListBook())));
+                    bookMenu.printListObject(bookManager.sorByPrice(bookManager.getStaleBook(bookManager.updateListBook())));
         }
     }
 }

@@ -4,7 +4,6 @@ package org.example.model.book;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -12,14 +11,15 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 import org.example.model.SrvFileManager;
+import org.example.model.exception.NoClearFileException;
 
 
 public class BookManager implements SrvFileManager {
 
-    private final PrintStream printStream = System.out;
+
     @Getter
     private Map<Long, Book> mapBooks = new TreeMap<>();
-    @Getter
+    @Getter // пока токо для контроллеров
     private List<Book> listBook;
 
     public BookManager(List<Book> listBook) {
@@ -29,19 +29,18 @@ public class BookManager implements SrvFileManager {
         }
     }
 
-    public void deleteBook(Book book) {
-        if (book.getAmount() == 0) {
+    public void deleteBook(Long id) {
+        if (mapBooks.get(id).getAmount() == 0) {
             printStream.println("### Такая книга и так не доступна");
         } else {
-            book.decrementAmount();
+            mapBooks.get(id).decrementAmount();
         }
     }
 
 
-
     // -------------------- Работа с файлами -------------------------------
     public Optional<Book> findById(Long id) {
-        for (Book book : listBook) {
+        for (Book book : mapBooks.values()) {
             if (book.getId().equals(id)) {
                 return Optional.of(book);
             }
@@ -50,12 +49,30 @@ public class BookManager implements SrvFileManager {
     }
 
 
+    @Override
+    public void exportModel(Long id) {
+        if (!clearFile(EXPORT_FILE_BOOK)) {
+            throw new NoClearFileException("### Ошибка очистки файла файла!");
+        }
+
+        Optional<Book> optionalBook = findById(id);
+        if (optionalBook.isPresent()) {
+            Book book = optionalBook.get();
+            if (book.writeTitle(EXPORT_FILE_BOOK, book.generateTitle()) &&
+                book.writeDate(EXPORT_FILE_BOOK)) {
+                printStream.printf("### Успешно экспортирована книга id = %d\n", id);
+                return;
+            }
+            printStream.println("### Такой книги нет!");
+        }
+    }
+
+    //todo: рефакторинг лишних выводов, И титульной строки
 
     @Override
     public void exportAll() {
         if (!clearFile(EXPORT_FILE_BOOK)) {
-            printStream.println("### Ошибка очистки файла файлами");
-            return;
+            throw new NoClearFileException("### Ошибка очистки файла файла!");
         }
 
         boolean flag = true;
@@ -64,73 +81,43 @@ public class BookManager implements SrvFileManager {
             try {
                 //Логика записывания заголовка
                 if (flag) {
-                    String title = map.getValue().generateTitle();
-                    map.getValue().writeTitle(EXPORT_FILE_BOOK, title);
+                    map.getValue().writeTitle(EXPORT_FILE_BOOK, map.getValue().generateTitle());
                     flag = false;
                 }
                 map.getValue().writeDate(EXPORT_FILE_BOOK);
-            } catch (RuntimeException | IOException e) {
-                printStream.println("### Запись не произошла! ");
+            } catch (RuntimeException e) {
+                printStream.println("### Ошибка Запись не произошла! ");
                 return;
             }
         }
         printStream.println("### Успешно все записалось в файл!");
     }
 
-
-    private Optional<Book> getParseBook(String input) {
-        Optional<String[]> optional = getParseLine(input);
-        if (optional.isPresent()) {
-            String[] arr = optional.get();
-            //MAGIC NUMBER -  количество полей
-            if (arr.length != 11) {
-                return Optional.empty();
-            }
-
-            try {
-                Long ID = Long.parseLong(arr[0]);
-
-                if (mapBooks.get(ID) == null) {
-                    //Нет книги такой
-                    return Optional.empty();
+    @Override
+    public void importModel(Long id) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Optional<Book> optional = builtBook(line, id);
+                if (optional.isPresent()) {
+                    Book book = optional.get();
+                    mapBooks.put(book.getId(), book);
+                    printStream.println("### Книга импортирована");
                 }
-                String name = arr[1];
-                String author = arr[2];
-                LocalDate publishedDate = LocalDate.parse(arr[3]);
-                String description = arr[4];
-                Double price = Double.parseDouble(arr[5]);
-                Integer amount = Integer.parseInt(arr[6]);
-                StatusBookEnum statusBookEnum = StatusBookEnum.valueOf(arr[7]);
-                Integer references = Integer.parseInt(arr[8]);
-                LocalDate lastDeliverDate = LocalDate.parse(arr[9]);
-                LocalDate lastSelleDate;
-
-                if (arr[10].equals("null")) {
-                    //todo: подумать
-                    lastSelleDate = LocalDate.now();
-                } else {
-                    lastSelleDate = LocalDate.parse(arr[10]);
-                }
-
-                Book book = new Book(ID, name, author, publishedDate, description, price,
-                        amount, statusBookEnum, references, lastDeliverDate, lastSelleDate);
-                return Optional.of(book);
-
-            } catch (RuntimeException e) {
-                System.out.println("Ошибка: преобразование объекта");
-                return Optional.empty();
             }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
         }
-        return Optional.empty();
     }
+
 
     @Override
     public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<Book> optional = getParseBook(line);
-
+                Optional<Book> optional = createBookFromFile(getParseLine(line).get());
+                //Все отвественной за вывод на консоль происходит в builtBook
                 if (optional.isPresent()) {
                     Book book = optional.get();
                     mapBooks.put(book.getId(), book);
@@ -141,12 +128,73 @@ public class BookManager implements SrvFileManager {
         }
     }
 
+    private Optional<Book> builtBook(String input, Long id) {
+        if (mapBooks.get(id) == null) {
+            System.out.println("### Такой книги нет В библиотеке");
+            return Optional.empty();
+        }
+
+        Optional<String[]> optional = getParseLine(input);
+        if (optional.isPresent() && optional.get().length > 1) {
+            String[] arr = optional.get();
+            try {
+                Long idTemp = Long.parseLong(arr[0]);
+
+                if (Objects.equals(idTemp, id)) {
+                    return createBookFromFile(arr);
+                }
+
+            } catch (RuntimeException e) {
+                System.out.println("### Ошибка: преобразование объекта");
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    private Optional<Book> createBookFromFile(String[] arr) {
+        try {
+            Long id = Long.parseLong(arr[0]);
+
+            if (mapBooks.get(id) == null) {
+                printStream.println("### Ошибка. Книги нет в библиотеке, нельзя импортировать");
+                return Optional.empty();
+            }
+
+            String name = arr[1];
+            String author = arr[2];
+            LocalDate publishedDate = LocalDate.parse(arr[3]);
+            String description = arr[4];
+            Double price = Double.parseDouble(arr[5]);
+            Integer amount = Integer.parseInt(arr[6]);
+            StatusBookEnum statusBookEnum = StatusBookEnum.valueOf(arr[7]);
+            Integer references = Integer.parseInt(arr[8]);
+            LocalDate lastDeliverDate = LocalDate.parse(arr[9]);
+            LocalDate lastSelleDate;
+
+            if (arr[10].equals("null")) {
+                //todo: подумать
+                lastSelleDate = LocalDate.now();
+            } else {
+                lastSelleDate = LocalDate.parse(arr[10]);
+            }
+
+            return Optional.of(new Book(id, name, author, publishedDate, description, price,
+                    amount, statusBookEnum, references, lastDeliverDate, lastSelleDate));
+        } catch (RuntimeException e) {
+            System.out.println("### Не корректное преобразование строк");
+            return Optional.empty();
+        }
+    }
+
+
     //-------------------------------------------------------------
 
-    public List<Book> generateList() {
-        listBook.clear();
-        for (Map.Entry<Long, Book> map : mapBooks.entrySet()) {
-            listBook.add(map.getValue());
+    public List<Book> updateListBook() {
+        listBook = new ArrayList<>();
+        for (Map.Entry<Long, Book> item : mapBooks.entrySet()) {
+            listBook.add(item.getValue());
         }
         return listBook;
     }

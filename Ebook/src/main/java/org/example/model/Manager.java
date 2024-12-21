@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
+import org.example.ConstantsPath;
 import org.example.model.book.Book;
 import org.example.model.book.BookManager;
 import org.example.model.order.OrderManager;
@@ -15,7 +16,7 @@ import org.example.model.request.RequestBookManager;
 @Getter
 @Setter
 @Log4j2
-public class Manager {
+public class Manager implements ConstantsPath {
     private BookManager bookManager;
     private OrderManager orderManager;
     private RequestBookManager requestBookManager;

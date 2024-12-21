@@ -11,8 +11,12 @@ public class BookMenu implements Menu {
         printStream.println("[1] Добавить еще один экземпляр книги");
         printStream.println("[2] Списать книгу со склада");
         printStream.println("[3] Вывести список книг");
-        printStream.println("[4] Вернуться в главное меню");
-        printStream.println("[5] Выйти из программы");
+        printStream.println("[4] Экспортировать книгу");
+        printStream.println("[5] Экспортировать все книги");
+        printStream.println("[6] Импортировать книгу");
+        printStream.println("[7] Импортировать все книги");
+        printStream.println("[8] Вернуться в главное меню");
+        printStream.println("[9] Выйти из программы");
     }
 
     @Override
@@ -29,7 +33,7 @@ public class BookMenu implements Menu {
 
     @Override
     public void printListObject(List<? extends Object> book) {
-        if(book.size() ==0 ){
+        if (book.size() == 0) {
             printStream.println("### В массиве пусто");
             return;
         }

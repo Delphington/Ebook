@@ -46,24 +46,30 @@ public class Main {
         Manager manager = new Manager(bookManager, orderManager, requestBookManager);
 
         MenuUserController menuUserController = new MenuUserController(manager);
-        //menuUserController.run();
+        menuUserController.run();
+//        System.out.println("==========Все книги=================");
+//        for(Book book :  manager.getBookManager().getListBook()){
+//            System.out.println(book);
+//        }
 
 
-        //todo: на всех уровнях есть bookManager
+        bookManager.exportModel(1L);
 
-        RequestBook r1 = new RequestBook(book1);
-        RequestBook r2 = new RequestBook(book2);
-
-        RequestBook.requestBookList = new ArrayList<>(List.of(r1, r2));
-
-        for (RequestBook requestBook : RequestBook.requestBookList) {
-            System.out.println(requestBook);
-        }
-        System.out.println("-----------------------------------");
-        requestBookManager.importAll();
-        for (RequestBook requestBook : RequestBook.requestBookList) {
-            System.out.println(requestBook);
-        }
+//        //todo: на всех уровнях есть bookManager
+//
+//        RequestBook r1 = new RequestBook(book1);
+//        RequestBook r2 = new RequestBook(book2);
+//
+//        RequestBook.requestBookList = new ArrayList<>(List.of(r1, r2));
+//
+//        for (RequestBook requestBook : RequestBook.requestBookList) {
+//            System.out.println(requestBook);
+//        }
+//        System.out.println("-----------------------------------");
+//        requestBookManager.importAll();
+//        for (RequestBook requestBook : RequestBook.requestBookList) {
+//            System.out.println(requestBook);
+//        }
 //
 //        manager.getOrderManager().createOrder();
 //        manager.getOrderManager().createOrder();

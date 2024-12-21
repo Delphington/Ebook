@@ -2,14 +2,14 @@ package org.example.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.SrvWriterExporter;
+import org.example.model.SrvExporter;
 import org.example.model.book.Book;
 
 import java.util.*;
 
 @Getter
 @Setter
-public class RequestBook implements SrvWriterExporter {
+public class RequestBook implements SrvExporter {
     private Long id;
     private static long counterID = 1;
     private Book book;
@@ -42,8 +42,14 @@ public class RequestBook implements SrvWriterExporter {
 
     //------------- Для работы с файлами -------------------------------
 
+    public void copyOf(RequestBook requestBook) {
+        this.book = requestBook.book;
+        this.requestBookStatus = requestBook.requestBookStatus;
+    }
+
+
     @Override
-    public String generateString() {
+    public String generateInfoObject() {
         StringBuilder temp = new StringBuilder();
         temp.append(id).append(DEFAULT_DELIMITER);
         temp.append(book.getId()).append(DEFAULT_DELIMITER);
@@ -57,7 +63,7 @@ public class RequestBook implements SrvWriterExporter {
         return "IDRequest:IdBook:status\n";
     }
 
-    public void of(RequestBook requestBook){
+    public void of(RequestBook requestBook) {
         id = requestBook.getId();
         book = requestBook.getBook();
         requestBookStatus = requestBook.getRequestBookStatus();

@@ -8,32 +8,33 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public interface SrvWriterExporter {
-    String DEFAULT_DELIMITER = ";";
+public interface SrvExporter {
+    String DEFAULT_DELIMITER = ",";
 
-    String generateString();
+    String generateInfoObject();
 
     String generateTitle();
 
-    default boolean writeDate(String strPath) throws IOException {
+    default boolean writeDate(String strPath)  {
         Path path = Paths.get(strPath);
+
         // Убедимся, что родительская директория существует
         Path parentDir = path.getParent();
         if (parentDir != null) {
             try {
                 Files.createDirectories(parentDir);
             } catch (IOException e) {
-                System.err.println("Ошибка в директории: " + e.getMessage());
+                System.err.println("### Ошибка в директории: " + e.getMessage());
                 throw new RuntimeException(e);
             }
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(path,
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
-            writer.write(generateString()); // Используем BufferedWriter
+            writer.write(generateInfoObject()); // Используем BufferedWriter
         } catch (IOException e) {
-            System.err.println("Ошибка при записи в файл: " + e.getMessage());
-            throw new RuntimeException(e);
+            System.err.println("### Ошибка при записи в файл: " + e.getMessage());
+            return false;
         }
         return true;
     }

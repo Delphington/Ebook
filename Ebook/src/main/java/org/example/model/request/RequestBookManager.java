@@ -5,16 +5,14 @@ import org.example.model.SrvFileManager;
 import org.example.model.book.Book;
 import org.example.model.book.BookManager;
 import org.example.model.book.StatusBookEnum;
+import org.example.model.exception.NoClearFileException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.management.OperatingSystemMXBean;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class RequestBookManager implements SrvFileManager {
 
@@ -84,6 +82,23 @@ public class RequestBookManager implements SrvFileManager {
         return Optional.empty();
     }
 
+    @Override
+    public void exportModel(Long id) {
+        if (!clearFile(EXPORT_FILE_REQUEST_BOOK)) {
+            throw new NoClearFileException("### Ошибка очистки файла файла!");
+        }
+
+        for (RequestBook item : RequestBook.requestBookList) {
+            if (Objects.equals(item.getId(), id)) {
+                if (item.writeTitle(EXPORT_FILE_REQUEST_BOOK, item.generateTitle()) &&
+                    item.writeDate(EXPORT_FILE_REQUEST_BOOK)) {
+                    printStream.printf("### Успешно экспортирована запрос на книгу id = %d\n", id);
+                    return;
+                }
+            }
+        }
+        printStream.println("### Такой книги нет!");
+    }
 
     @Override
     public void exportAll() {
@@ -102,7 +117,7 @@ public class RequestBookManager implements SrvFileManager {
                     flag = false;
                 }
                 RequestBook.requestBookList.get(i).writeDate(EXPORT_FILE_REQUEST_BOOK);
-            } catch (RuntimeException | IOException e) {
+            } catch (RuntimeException e) {
                 printStream.println("### Запись не произошла! ");
                 return;
             }
@@ -111,59 +126,111 @@ public class RequestBookManager implements SrvFileManager {
     }
 
     @Override
-    public void importAll() {
+    public void importModel(Long id) {
+        //Проверка что такая книга есть
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_REQUEST_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<RequestBook> optionalRequestBookFromFile = getParseBook(line);
-                if (optionalRequestBookFromFile.isPresent()) {
-                    RequestBook requestBookFromFile = optionalRequestBookFromFile.get();
-                    Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId());
+                Optional<RequestBook> optional = builtRequestBook(line, id);
+                if (optional.isPresent()) {
+                    RequestBook requestBook = optional.get();
+                    //Обновление есть
+                    Optional<RequestBook> requestBookOptional = findById(requestBook.getId());
                     if (requestBookOptional.isPresent()) {
-                        requestBookOptional.get().of(requestBookFromFile);
-                    } else {
-                        //добавляем
-                        addRequestBook(requestBookFromFile);
+                        requestBookOptional.get().copyOf(requestBook);
+                        printStream.println("### Книга импортирована и обновленна");
+                        return;
+
+                    } else if (requestBook.getBook().getAmount() <= 0) {
+                        RequestBook.requestBookList.add(requestBook);
+                        printStream.println("### Книга импортирована и добаленна");
+                        return;
+
                     }
+                    printStream.println("### Книг много, на них нельзя сделать запрос!");
+                    return;
+
                 }
             }
+            printStream.println("### Не получилось импортировать");
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
     }
 
-
-    private Optional<RequestBook> getParseBook(String input) {
+    private Optional<RequestBook> builtRequestBook(String input, Long id) {
         Optional<String[]> optional = getParseLine(input);
-
-        if (optional.isPresent()) {
+        if (optional.isPresent() && optional.get().length > 2) {
             String[] arr = optional.get();
-            if (arr.length != 3) {
-                return Optional.empty();
-            }
-            Long requestBookId;
-            Long bookId;
-            RequestBookStatus requestBookStatus;
+            Long requestId = null;
             try {
-                requestBookId = Long.parseLong(arr[0]);
-                bookId = Long.parseLong(arr[1]);
-                requestBookStatus = RequestBookStatus.valueOf(arr[2]);
+                requestId = Long.parseLong(arr[0]);
+                if (!Objects.equals(id, requestId)) {
+                    return Optional.empty();
+                }
             } catch (RuntimeException e) {
-                System.err.println("Ошибка: преобразование объекта");
-                return Optional.empty();
             }
+            try {
 
-            Optional<Book> optionalBook = bookManager.findById(bookId);
-            if (optionalBook.isPresent()) {
-                Book book = optionalBook.get();
+                Long bookId = Long.parseLong(arr[1]);
+                RequestBookStatus requestBookStatus = RequestBookStatus.valueOf(arr[2]);
+
+                if (bookManager.getMapBooks().get(bookId) == null) {
+                    System.out.println("### Ошибка: Запрос на книгу, которой нет в библио");
+                    return Optional.empty();
+                }
 
                 //todo: про количество книг
-                return Optional.of(new RequestBook(requestBookId, book, requestBookStatus));
-
-            } else {
+                return Optional.of(new RequestBook(requestId, bookManager.getMapBooks().get(bookId), requestBookStatus));
+            } catch (RuntimeException e) {
+                System.out.println("### Ошибка: преобразование объекта");
                 return Optional.empty();
             }
         }
         return Optional.empty();
+    }
+
+
+    private Optional<RequestBook> getBuolt(String[] arr) {
+
+        try {
+            Long requestId = Long.parseLong(arr[0]);
+
+            Long bookId = Long.parseLong(arr[1]);
+            RequestBookStatus requestBookStatus = RequestBookStatus.valueOf(arr[2]);
+
+            if (bookManager.getMapBooks().get(bookId) == null) {
+                System.out.println("### Ошибка: Запрос на книгу, которой нет в библио");
+                return Optional.empty();
+            }
+            return Optional.of(new RequestBook(requestId, bookManager.getMapBooks().get(bookId), requestBookStatus));
+
+        } catch (RuntimeException e) {
+            System.out.println("### Ошибка: преобразование объекта");
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void importAll() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_REQUEST_BOOK))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Optional<RequestBook> optionalRequestBookFromFile = getBuolt(getParseLine(line).get());
+                if (optionalRequestBookFromFile.isPresent()) {
+                    RequestBook requestBookFromFile = optionalRequestBookFromFile.get();
+
+                    Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId());
+                    if (requestBookOptional.isPresent()) {
+                        requestBookOptional.get().copyOf(requestBookFromFile);
+                    } else {
+                        addRequestBook(requestBookFromFile);
+                    }
+                }
+            }
+            System.out.println("### Файла импортированы! ");
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
     }
 }

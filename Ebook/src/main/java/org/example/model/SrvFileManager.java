@@ -1,5 +1,10 @@
 package org.example.model;
 
+import org.example.ConstantsPath;
+import org.example.model.exception.NoClearFileException;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -8,21 +13,20 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
-public interface SrvFileManager {
-    String EXPORT_FILE_BOOK = "src/main/resources/export/exportBooks.csv";
-    String IMPORT_FILE_BOOK = "src/main/resources/import/importBooks.csv";
+public interface SrvFileManager extends ConstantsPath {
 
-    String EXPORT_FILE_ORDER = "src/main/resources/export/exportOrders.csv";
-    String IMPORT_FILE_ORDER = "src/main/resources/import/importOrders.csv";
-
-    String EXPORT_FILE_REQUEST_BOOK = "src/main/resources/export/exportRequests.csv";
-    String IMPORT_FILE_REQUEST_BOOK = "src/main/resources/import/importRequests.csv";
-
-    String DEFAULT_DELIMITER = ";";
+    String DEFAULT_DELIMITER = ",";
 
     PrintStream printStream = System.out;
 
+    default void exportModel(Long id) throws NoClearFileException {
+    }
+
+    default void importModel(Long id) {
+    }
+
     void exportAll();
+
     void importAll();
 
     default boolean clearFile(String filePath) {
@@ -41,5 +45,16 @@ public interface SrvFileManager {
             return Optional.empty();
         }
         return Optional.of(input.split(DEFAULT_DELIMITER));
+    }
+
+    default void printAllFile(final String path) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
     }
 }

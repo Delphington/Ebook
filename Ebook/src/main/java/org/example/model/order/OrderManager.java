@@ -201,7 +201,7 @@ public class OrderManager implements SrvFileManager {
                     flag = false;
                 }
                 orderList.get(i).writeDate(EXPORT_FILE_ORDER);
-            } catch (RuntimeException | IOException e) {
+            } catch (RuntimeException e) {
                 printStream.println("### Запись не произошла! ");
                 return;
             }
