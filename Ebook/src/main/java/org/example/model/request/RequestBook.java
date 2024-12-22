@@ -58,10 +58,7 @@ public class RequestBook implements Item {
     }
 
 
-    @Override
-    public String generateTitle() {
-        return "IDRequest:IdBook:status\n";
-    }
+
 
     public void of(RequestBook requestBook) {
         id = requestBook.getId();

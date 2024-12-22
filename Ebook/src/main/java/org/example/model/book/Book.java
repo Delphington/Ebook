@@ -138,8 +138,4 @@ public class Book implements Item {
         return temp.toString();
     }
 
-    @Override
-    public String generateTitle() {
-        return "id;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
-    }
 }

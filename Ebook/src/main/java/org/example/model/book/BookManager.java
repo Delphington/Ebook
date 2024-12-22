@@ -44,29 +44,6 @@ public class BookManager implements SrvFileManager {
 
     //todo: рефакторинг лишних выводов, И титульной строки
 
-    @Override
-    public void exportAll() {
-        if (!clearFile(EXPORT_FILE_BOOK)) {
-            throw new NoClearFileException("### Ошибка очистки файла файла!");
-        }
-
-        boolean flag = true;
-
-        for (Map.Entry<Long, Book> map : mapBooks.entrySet()) {
-            try {
-                //Логика записывания заголовка
-                if (flag) {
-                    map.getValue().writeTitle(EXPORT_FILE_BOOK, map.getValue().generateTitle());
-                    flag = false;
-                }
-                map.getValue().writeDate(EXPORT_FILE_BOOK);
-            } catch (RuntimeException e) {
-                printStream.println("### Ошибка Запись не произошла! ");
-                return;
-            }
-        }
-        printStream.println("### Успешно все записалось в файл!");
-    }
 
     @Override
     public void importModel(Long id) {

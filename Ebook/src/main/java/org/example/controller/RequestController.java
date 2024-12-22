@@ -48,10 +48,12 @@ public class RequestController implements Controller {
                     requestBookMenu.printListObject(manager.getBookManager().sorByPrice(requestBookManager.getBookFromRequestBook()));
             case 4 -> {
                 Integer index = getIndexChoose(RequestBook.requestBookList);
-                requestBookManager.exportModel(RequestBook.requestBookList.get(index).getId(),
-                        ConstantsPath.EXPORT_FILE_REQUEST_BOOK, RequestBook.requestBookList);
+                requestBookManager.exportItem(RequestBook.requestBookList.get(index).getId(),
+                        ConstantsPath.EXPORT_FILE_REQUEST_BOOK,ConstantsPath.REQUEST_TITLE, RequestBook.requestBookList);
             }
-            case 5 -> requestBookManager.exportAll();
+
+            case 5 -> requestBookManager.exportAll(ConstantsPath.EXPORT_FILE_REQUEST_BOOK,
+                    ConstantsPath.REQUEST_TITLE, RequestBook.requestBookList);
 
             case 6 -> {
                 //todo: может здесь и другой метод залутать можно getBookId

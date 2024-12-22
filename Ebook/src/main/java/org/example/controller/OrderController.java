@@ -84,11 +84,13 @@ public class OrderController implements Controller {
             case 8 -> printStream.println("Прибыль закрытый заказов: " + orderManager.calculateCompletedOrderProfit());
             case 9 -> printMenuListBook();
 
-            case 10 -> orderManager.exportModel(getIdChoose(orderManager.getOrderList()),
-                    ConstantsPath.EXPORT_FILE_ORDER, orderManager.getOrderList());
+            case 10 -> orderManager.exportItem(getIdChoose(orderManager.getOrderList()),
+                    ConstantsPath.EXPORT_FILE_ORDER,ConstantsPath.ORDER_TITLE ,orderManager.getOrderList());
 
             case 11 -> {
-                orderManager.exportAll();
+
+                orderManager.exportAll(ConstantsPath.EXPORT_FILE_ORDER,
+                        ConstantsPath.ORDER_TITLE, orderManager.getOrderList());
             }
             case 12 -> {
                 orderManager.printAllFile(manager.IMPORT_FILE_ORDER);

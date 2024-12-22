@@ -74,30 +74,7 @@ public class RequestBookManager implements SrvFileManager {
     // ---------------------- Для работы с файлами -----------------------------------------
 
 
-    @Override
-    public void exportAll() {
-        if (!clearFile(EXPORT_FILE_REQUEST_BOOK)) {
-            printStream.println("### Ошибка очистки файла файлами");
-            return;
-        }
 
-        boolean flag = true;
-
-        for (int i = 0; i < RequestBook.requestBookList.size(); i++) {
-            try {
-                if (flag) {
-                    String title = RequestBook.requestBookList.get(i).generateTitle();
-                    RequestBook.requestBookList.get(i).writeTitle(EXPORT_FILE_REQUEST_BOOK, title);
-                    flag = false;
-                }
-                RequestBook.requestBookList.get(i).writeDate(EXPORT_FILE_REQUEST_BOOK);
-            } catch (RuntimeException e) {
-                printStream.println("### Запись не произошла! ");
-                return;
-            }
-        }
-        printStream.println("### Успешно все записалось в файл!");
-    }
 
     @Override
     public void importModel(Long id) {

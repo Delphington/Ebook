@@ -2,11 +2,9 @@ package org.example.model;
 
 import org.example.ConstantsPath;
 import org.example.model.exception.NoClearFileException;
+import org.example.model.request.RequestBook;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,16 +18,34 @@ public interface SrvFileManager extends ConstantsPath {
 
     PrintStream printStream = System.out;
 
-   //default void exportModel(Long id){};
-
 
     void importModel(Long id);
 
-    void exportAll();
+   // void exportAll();
 
     void importAll();
 
-    default <T extends Item> void exportModel(Long id, final String path, List<T> list) {
+
+    default <T extends Item> void exportAll(final String path, final String title, List<T> list) {
+        if (!clearFile(path)) {
+            printStream.println("### Ошибка очистки файла файлами");
+            return;
+        }
+        try {
+            writeTitle(path, title);
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).writeDate(path);
+            }
+        } catch (RuntimeException e) {
+            printStream.println("### Запись не произошла! ");
+            return;
+        }
+        printStream.println("### Успешно все записалось в файл!");
+    }
+
+
+    //----------------- Экспортировка по Id у элементов Book, Order, RequestBook -----------------------
+    default <T extends Item> void exportItem(Long id, final String path, final String title, List<T> list) {
         if (!clearFile(path)) {
             throw new NoClearFileException("### Ошибка очистки файла файла!");
         }
@@ -37,7 +53,7 @@ public interface SrvFileManager extends ConstantsPath {
         Optional<T> optionalBook = findById(id, list);
         if (optionalBook.isPresent()) {
             T item = optionalBook.get();
-            if (item.writeTitle(EXPORT_FILE_ORDER, item.generateTitle()) &&
+            if (item.writeTitle(EXPORT_FILE_ORDER, title) &&
                 item.writeDate(EXPORT_FILE_ORDER)) {
                 printStream.printf("### Успешно экспортирована книга id = %d\n", id);
                 return;
@@ -45,8 +61,6 @@ public interface SrvFileManager extends ConstantsPath {
         }
         printStream.println("### Такой книги нет!");
     }
-
-
 
 
     //----------------- Поиск по Id у элементов Book, Order, RequestBook -----------------------
@@ -87,5 +101,29 @@ public interface SrvFileManager extends ConstantsPath {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
+    }
+
+
+    default boolean writeTitle(String strPath, String title) {
+        Path path = Paths.get(strPath);
+        // Убедимся, что родительская директория существует
+        Path parentDir = path.getParent();
+        if (parentDir != null) {
+            try {
+                Files.createDirectories(parentDir);
+            } catch (IOException e) {
+                System.err.println("Ошибка в директории: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path,
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+            writer.write(title); // Используем BufferedWriter
+        } catch (IOException e) {
+            System.err.println("Ошибка при записи в файл: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return true;
     }
 }

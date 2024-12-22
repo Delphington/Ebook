@@ -14,7 +14,7 @@ public interface Item {
 
     String generateInfoObject();
 
-    String generateTitle();
+   // String generateTitle();
 
     default boolean writeDate(String strPath)  {
         Path path = Paths.get(strPath);

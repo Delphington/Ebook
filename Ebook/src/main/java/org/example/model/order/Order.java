@@ -139,9 +139,4 @@ public class Order implements Item {
         }
         return temp.toString();
     }
-
-    @Override
-    public String generateTitle() {
-        return "ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N\n";
-    }
 }

@@ -176,30 +176,6 @@ public class OrderManager implements SrvFileManager {
 
 
 
-    @Override
-    public void exportAll() {
-        if (!clearFile(EXPORT_FILE_ORDER)) {
-            printStream.println("### Ошибка очистки файла файлами");
-            return;
-        }
-
-        boolean flag = true;
-
-        for (int i = 0; i < orderList.size(); i++) {
-            try {
-                if (flag) {
-                    String title = orderList.get(i).generateTitle();
-                    orderList.get(i).writeTitle(EXPORT_FILE_ORDER, title);
-                    flag = false;
-                }
-                orderList.get(i).writeDate(EXPORT_FILE_ORDER);
-            } catch (RuntimeException e) {
-                printStream.println("### Запись не произошла! ");
-                return;
-            }
-        }
-        printStream.println("### Успешно все записалось в файл!");
-    }
 
     @Override
     public void importModel(Long id) {

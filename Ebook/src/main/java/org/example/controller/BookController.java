@@ -48,9 +48,12 @@ public class BookController implements Controller {
             }
             case 3 -> printMenuListBook();
 
-            case 4 -> bookManager.exportModel(getIdChooseBook(bookManager.getMapBooks()), ConstantsPath.EXPORT_FILE_BOOK,
+            case 4 -> bookManager.exportItem(getIdChooseBook(bookManager.getMapBooks()),
+                    ConstantsPath.EXPORT_FILE_BOOK, ConstantsPath.BOOK_TITLE,
                     bookManager.updateListBook());
-            case 5 -> bookManager.exportAll();
+
+            case 5 -> bookManager.exportAll(ConstantsPath.EXPORT_FILE_BOOK,
+                    ConstantsPath.BOOK_TITLE, bookManager.updateListBook());
             case 6 -> {
                 bookManager.printAllFile(manager.IMPORT_FILE_BOOK);
                 Long id = getScannerNumber();
