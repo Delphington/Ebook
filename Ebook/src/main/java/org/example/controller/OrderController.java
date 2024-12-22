@@ -62,10 +62,10 @@ public class OrderController implements Controller {
             //отмена заказа
             case 3 -> {
                 //TODO: ##
-//                LONG indexBook = getIndexChooseBook(bookManager.getMapBooks());
-//                Integer indexOrder = orderManager.getSelectedOrderIndex();
-//                Order orderTemp = orderManager.getOrderList().get(indexOrder);
-//                orderTemp.addBook(bookManager.getListBook().get(indexBook));
+                Long indexBook = getIdChooseBook(bookManager.getMapBooks());
+                Integer indexOrder = orderManager.getSelectedOrderIndex();
+                Order orderTemp = orderManager.getOrderList().get(indexOrder);
+                orderTemp.addBook(bookManager.getMapBooks().get(indexBook));
             }
 
             case 4 -> orderMenu.printListObject(orderManager.sortByAmount(orderManager.getOrderList()));
@@ -85,14 +85,18 @@ public class OrderController implements Controller {
 
             case 10 -> orderManager.exportModel(getIdChoose(orderManager.getOrderList()));
 
-            case 11 -> {orderManager.exportAll();}
-            case 12 -> {}
-            case 13 -> {}
-//            printStream.println("[10] Экспортировать заказ");
-//            printStream.println("[11] Экспортировать все заказы");
-//            printStream.println("[12] Импортировать заказ");
-//            printStream.println("[13] Импортировать все заказы");
-//
+            case 11 -> {
+                orderManager.exportAll();
+            }
+            case 12 -> {
+                orderManager.printAllFile(manager.IMPORT_FILE_ORDER);
+                Long id = getScannerNumber();
+                orderManager.importModel(id);
+
+
+            }
+            case 13 -> orderManager.importAll();
+
 
             case 14 -> actionType = ActionType.MAIN_MENU;
             case 15 -> actionType = ActionType.EXIT;
@@ -139,6 +143,5 @@ public class OrderController implements Controller {
                 printStream.println("Количество: " + list.size());
             }
         }
-
     }
 }

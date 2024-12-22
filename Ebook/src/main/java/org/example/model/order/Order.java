@@ -82,7 +82,7 @@ public class Order implements SrvExporter {
         orderStatusEnum = StatusOrderEnum.CANCEL;
     }
 
-    public void of(Order order) {
+    public void coyOf(Order order) {
         id = order.getId();
         createDate = order.getCreateDate();
         completedDate = order.getCompletedDate();

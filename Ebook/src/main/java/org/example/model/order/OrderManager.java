@@ -185,7 +185,7 @@ public class OrderManager implements SrvFileManager {
     }
 
     @Override
-    public void exportModel(Long id){
+    public void exportModel(Long id) {
         if (!clearFile(EXPORT_FILE_ORDER)) {
             throw new NoClearFileException("### Ошибка очистки файла файла!");
         }
@@ -229,24 +229,56 @@ public class OrderManager implements SrvFileManager {
     }
 
     @Override
+    public void importModel(Long id) {
+        //Проверка что такая книга есть
+        try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_ORDER))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                Optional<Order> optional = getBuiltOrder(line, id);
+                if (optional.isPresent()) {
+                    Order order = optional.get();
+
+                    //Обновление есть
+                    Optional<Order> orderBookOptional = findById(order.getId());
+                    if (orderBookOptional.isPresent()) {
+                        orderBookOptional.get().coyOf(order);
+                        printStream.println("### Заказ импортирована и обновленна");
+                        return;
+
+                    } else {
+                        orderList.add(order);
+                        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+                        printStream.println("### Заказ испортирован!");
+                        return;
+                    }
+
+                }
+            }
+            printStream.println("### Не получилось импортировать");
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+
+    @Override
     public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_ORDER))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<Order> optional = getParseOrder(line);
+                Optional<Order> optional = getBuiltOrder(getParseLine(line).get());
+                System.out.println("line " + line);
                 if (optional.isPresent()) {
-                    Order importOrder = optional.get();
-                    Optional<Order> optionalOrder = findById(importOrder.getId());
-                    if (optionalOrder.isPresent()) {
-                        Order item = optionalOrder.get();
-                        item.of(importOrder);
+                    Order order = optional.get();
 
-//                        System.out.println("****************************************");
-//                        System.out.println("в базе: " + item);
-//                        System.out.println("Из файла: " + importOrder);
-//                        System.out.println("****************************************");
+                    //Обновление есть
+                    Optional<Order> orderBookOptional = findById(order.getId());
+                    if (orderBookOptional.isPresent()) {
+                        orderBookOptional.get().coyOf(order);
+
                     } else {
-                        addOrder(importOrder);
+                        orderList.add(order);
                     }
 
                 } else {
@@ -256,16 +288,66 @@ public class OrderManager implements SrvFileManager {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
+        System.out.println("### Все успешно импортировалось");
+
+    }
+
+    //todo: преобразование элемента в функцию
+//todo: опасные моменты когда get и передается массив
+
+    private Optional<Order> getBuiltOrder(String[] arr) {
+
+        //Минимальное количество для заказа (без книг)
+        if (arr.length < 4) {
+            return Optional.empty();
+        }
+
+        Long id = null;
+        LocalDate createDate = null;
+        LocalDate completedDate = null;
+        Double amountSum = null;
+        StatusOrderEnum orderStatusEnum = null;
+        try {
+            id = Long.parseLong(arr[0]);
+
+            createDate = LocalDate.parse(arr[1]);
+            try {
+                completedDate = LocalDate.parse(arr[2]);
+            } catch (RuntimeException e) {
+                //  System.out.println("### ComplectedDate is NULL");
+            }
+            amountSum = Double.parseDouble(arr[3]);
+            orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
+        } catch (RuntimeException e) {
+            System.err.println("Ошибка: преобразование объекта");
+            return Optional.empty();
+        }
+
+        Order order = new Order(id, createDate, completedDate, amountSum, orderStatusEnum);
+
+        for (int i = 5; i < arr.length; i++) {
+            Long bookId = null;
+            try {
+                bookId = Long.parseLong(arr[i]);
+            } catch (RuntimeException e) {
+                //todo: выкинуть свой Exception
+                System.err.println("### Не верное преобразование айди книги");
+            }
+            if (bookId != null && bookManager.getMapBooks().get(bookId) != null) {
+                order.addBook(bookManager.getMapBooks().get(bookId));
+            }
+
+        }
+        return Optional.of(order);
     }
 
 
-    private Optional<Order> getParseOrder(String input) {
+    private Optional<Order> getBuiltOrder(String input, Long ids) {
         //ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N
         Optional<String[]> optional = getParseLine(input);
         if (optional.isPresent()) {
             String[] arr = optional.get();
 
-            System.out.println("%%%: " +Arrays.toString(arr));
 
             //Минимальное количество для заказа (без книг)
             if (arr.length < 5) {
@@ -279,11 +361,16 @@ public class OrderManager implements SrvFileManager {
             StatusOrderEnum orderStatusEnum = null;
             try {
                 id = Long.parseLong(arr[0]);
+
+                if (!Objects.equals(id, ids)) {
+                    return Optional.empty();
+                }
+
                 createDate = LocalDate.parse(arr[1]);
-                try{
+                try {
                     completedDate = LocalDate.parse(arr[2]);
-                }catch (RuntimeException e){
-                  //  System.out.println("### ComplectedDate is NULL");
+                } catch (RuntimeException e) {
+                    //  System.out.println("### ComplectedDate is NULL");
                 }
                 amountSum = Double.parseDouble(arr[3]);
                 orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
@@ -302,15 +389,10 @@ public class OrderManager implements SrvFileManager {
                     //todo: выкинуть свой Exception
                     System.err.println("### Не верное преобразование айди книги");
                 }
-
-                if (bookId != null) {
-                    Optional<Book> optionalBook = bookManager.findById(bookId);
-                    if (optionalBook.isPresent()) {
-                        order.addBook(optionalBook.get());
-                    } else {
-                        System.err.println("### Такой книги нет в библио");
-                    }
+                if (bookId != null && bookManager.getMapBooks().get(bookId) != null) {
+                    order.addBook(bookManager.getMapBooks().get(bookId));
                 }
+
             }
             return Optional.of(order);
         }
