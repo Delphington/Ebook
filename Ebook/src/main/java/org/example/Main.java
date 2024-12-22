@@ -53,7 +53,6 @@ public class Main {
 //        }
 
 
-        bookManager.exportModel(1L);
 
 //        //todo: на всех уровнях есть bookManager
 //

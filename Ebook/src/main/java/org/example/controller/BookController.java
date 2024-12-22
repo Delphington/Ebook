@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.ConstantsPath;
 import org.example.UtilsInput;
 import org.example.model.book.Book;
 import org.example.model.book.BookManager;
@@ -46,7 +47,9 @@ public class BookController implements Controller {
                 bookManager.deleteBook(id);
             }
             case 3 -> printMenuListBook();
-            case 4 -> bookManager.exportModel(getIdChooseBook(bookManager.getMapBooks()));
+
+            case 4 -> bookManager.exportModel(getIdChooseBook(bookManager.getMapBooks()), ConstantsPath.EXPORT_FILE_BOOK,
+                    bookManager.updateListBook());
             case 5 -> bookManager.exportAll();
             case 6 -> {
                 bookManager.printAllFile(manager.IMPORT_FILE_BOOK);

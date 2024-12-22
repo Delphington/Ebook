@@ -73,32 +73,6 @@ public class RequestBookManager implements SrvFileManager {
 
     // ---------------------- Для работы с файлами -----------------------------------------
 
-    public Optional<RequestBook> findById(Long id) {
-        for (RequestBook requestBook : RequestBook.requestBookList) {
-            if (requestBook.getId().equals(id)) {
-                return Optional.of(requestBook);
-            }
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public void exportModel(Long id) {
-        if (!clearFile(EXPORT_FILE_REQUEST_BOOK)) {
-            throw new NoClearFileException("### Ошибка очистки файла файла!");
-        }
-
-        for (RequestBook item : RequestBook.requestBookList) {
-            if (Objects.equals(item.getId(), id)) {
-                if (item.writeTitle(EXPORT_FILE_REQUEST_BOOK, item.generateTitle()) &&
-                    item.writeDate(EXPORT_FILE_REQUEST_BOOK)) {
-                    printStream.printf("### Успешно экспортирована запрос на книгу id = %d\n", id);
-                    return;
-                }
-            }
-        }
-        printStream.println("### Такой книги нет!");
-    }
 
     @Override
     public void exportAll() {
@@ -135,7 +109,7 @@ public class RequestBookManager implements SrvFileManager {
                 if (optional.isPresent()) {
                     RequestBook requestBook = optional.get();
                     //Обновление есть
-                    Optional<RequestBook> requestBookOptional = findById(requestBook.getId());
+                    Optional<RequestBook> requestBookOptional = findById(requestBook.getId(), RequestBook.requestBookList);
                     if (requestBookOptional.isPresent()) {
                         requestBookOptional.get().copyOf(requestBook);
                         printStream.println("### Книга импортирована и обновленна");
@@ -220,7 +194,7 @@ public class RequestBookManager implements SrvFileManager {
                 if (optionalRequestBookFromFile.isPresent()) {
                     RequestBook requestBookFromFile = optionalRequestBookFromFile.get();
 
-                    Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId());
+                    Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId(), RequestBook.requestBookList);
                     if (requestBookOptional.isPresent()) {
                         requestBookOptional.get().copyOf(requestBookFromFile);
                     } else {

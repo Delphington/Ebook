@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Optional;
 
 public interface SrvFileManager extends ConstantsPath {
@@ -19,15 +20,45 @@ public interface SrvFileManager extends ConstantsPath {
 
     PrintStream printStream = System.out;
 
-    default void exportModel(Long id) throws NoClearFileException {
-    }
+   //default void exportModel(Long id){};
 
-    default void importModel(Long id) {
-    }
+
+    void importModel(Long id);
 
     void exportAll();
 
     void importAll();
+
+    default <T extends Item> void exportModel(Long id, final String path, List<T> list) {
+        if (!clearFile(path)) {
+            throw new NoClearFileException("### Ошибка очистки файла файла!");
+        }
+
+        Optional<T> optionalBook = findById(id, list);
+        if (optionalBook.isPresent()) {
+            T item = optionalBook.get();
+            if (item.writeTitle(EXPORT_FILE_ORDER, item.generateTitle()) &&
+                item.writeDate(EXPORT_FILE_ORDER)) {
+                printStream.printf("### Успешно экспортирована книга id = %d\n", id);
+                return;
+            }
+        }
+        printStream.println("### Такой книги нет!");
+    }
+
+
+
+
+    //----------------- Поиск по Id у элементов Book, Order, RequestBook -----------------------
+    default <T extends Item> Optional<T> findById(Long id, List<T> list) {
+        for (T item : list) {
+            if (item.getId().equals(id)) {
+                return Optional.of(item);
+            }
+        }
+        return Optional.empty();
+    }
+
 
     default boolean clearFile(String filePath) {
         Path path = Paths.get(filePath);

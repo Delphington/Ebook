@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.ConstantsPath;
 import org.example.UtilsInput;
 import org.example.model.Manager;
 import org.example.model.request.RequestBook;
@@ -47,7 +48,8 @@ public class RequestController implements Controller {
                     requestBookMenu.printListObject(manager.getBookManager().sorByPrice(requestBookManager.getBookFromRequestBook()));
             case 4 -> {
                 Integer index = getIndexChoose(RequestBook.requestBookList);
-                requestBookManager.exportModel(RequestBook.requestBookList.get(index).getId());
+                requestBookManager.exportModel(RequestBook.requestBookList.get(index).getId(),
+                        ConstantsPath.EXPORT_FILE_REQUEST_BOOK, RequestBook.requestBookList);
             }
             case 5 -> requestBookManager.exportAll();
 

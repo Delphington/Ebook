@@ -2,7 +2,7 @@ package org.example.model.order;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.SrvExporter;
+import org.example.model.Item;
 import org.example.model.request.RequestBookManager;
 import org.example.model.book.Book;
 
@@ -12,7 +12,7 @@ import java.util.*;
 @Getter
 @Setter
 //ID детали заказа
-public class Order implements SrvExporter {
+public class Order implements Item {
     private Long id;
     private LocalDate createDate;
     private LocalDate completedDate;

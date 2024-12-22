@@ -2,14 +2,14 @@ package org.example.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.SrvExporter;
+import org.example.model.Item;
 import org.example.model.book.Book;
 
 import java.util.*;
 
 @Getter
 @Setter
-public class RequestBook implements SrvExporter {
+public class RequestBook implements Item {
     private Long id;
     private static long counterID = 1;
     private Book book;

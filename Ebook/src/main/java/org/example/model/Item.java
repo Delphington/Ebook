@@ -1,6 +1,5 @@
 package org.example.model;
 
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public interface SrvExporter {
+public interface Item {
+   Long getId();
+
     String DEFAULT_DELIMITER = ",";
 
     String generateInfoObject();

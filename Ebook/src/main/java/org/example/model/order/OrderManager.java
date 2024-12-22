@@ -175,33 +175,6 @@ public class OrderManager implements SrvFileManager {
     }
 
 
-    public Optional<Order> findById(Long id) {
-        for (Order order : orderList) {
-            if (order.getId().equals(id)) {
-                return Optional.of(order);
-            }
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public void exportModel(Long id) {
-        if (!clearFile(EXPORT_FILE_ORDER)) {
-            throw new NoClearFileException("### Ошибка очистки файла файла!");
-        }
-
-        Optional<Order> optionalBook = findById(id);
-        if (optionalBook.isPresent()) {
-            Order order = optionalBook.get();
-            if (order.writeTitle(EXPORT_FILE_ORDER, order.generateTitle()) &&
-                order.writeDate(EXPORT_FILE_ORDER)) {
-                printStream.printf("### Успешно экспортирована книга id = %d\n", id);
-                return;
-            }
-        }
-        printStream.println("### Такой книги нет!");
-    }
-
 
     @Override
     public void exportAll() {
@@ -240,7 +213,7 @@ public class OrderManager implements SrvFileManager {
                     Order order = optional.get();
 
                     //Обновление есть
-                    Optional<Order> orderBookOptional = findById(order.getId());
+                    Optional<Order> orderBookOptional = findById(order.getId(), orderList);
                     if (orderBookOptional.isPresent()) {
                         orderBookOptional.get().coyOf(order);
                         printStream.println("### Заказ импортирована и обновленна");
@@ -273,7 +246,7 @@ public class OrderManager implements SrvFileManager {
                     Order order = optional.get();
 
                     //Обновление есть
-                    Optional<Order> orderBookOptional = findById(order.getId());
+                    Optional<Order> orderBookOptional = findById(order.getId(), orderList);
                     if (orderBookOptional.isPresent()) {
                         orderBookOptional.get().coyOf(order);
 

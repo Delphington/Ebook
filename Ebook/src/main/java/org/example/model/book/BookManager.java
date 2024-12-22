@@ -39,33 +39,8 @@ public class BookManager implements SrvFileManager {
 
 
     // -------------------- Работа с файлами -------------------------------
-    public Optional<Book> findById(Long id) {
-        for (Book book : mapBooks.values()) {
-            if (book.getId().equals(id)) {
-                return Optional.of(book);
-            }
-        }
-        return Optional.empty();
-    }
 
 
-    @Override
-    public void exportModel(Long id) {
-        if (!clearFile(EXPORT_FILE_BOOK)) {
-            throw new NoClearFileException("### Ошибка очистки файла файла!");
-        }
-
-        Optional<Book> optionalBook = findById(id);
-        if (optionalBook.isPresent()) {
-            Book book = optionalBook.get();
-            if (book.writeTitle(EXPORT_FILE_BOOK, book.generateTitle()) &&
-                book.writeDate(EXPORT_FILE_BOOK)) {
-                printStream.printf("### Успешно экспортирована книга id = %d\n", id);
-                return;
-            }
-            printStream.println("### Такой книги нет!");
-        }
-    }
 
     //todo: рефакторинг лишних выводов, И титульной строки
 

@@ -2,14 +2,14 @@ package org.example.model.book;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.model.SrvExporter;
+import org.example.model.Item;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class Book implements SrvExporter {
+public class Book implements Item {
     private final Long id;
     private String name;
     private String author;
