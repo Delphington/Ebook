@@ -18,8 +18,16 @@ public class OrderMenu implements Menu{
         printStream.println("[7] Посмотреть детали заказа");
         printStream.println("[8] Вывести сумму заработанных средств за период времени");
         printStream.println("[9] Вывести список заказов");
-        printStream.println("[10] Вернуться в главное меню");
-        printStream.println("[11] Выйти из программы");
+
+        printStream.println("[10] Экспортировать заказ");
+        printStream.println("[11] Экспортировать все заказы");
+        printStream.println("[12] Импортировать заказ");
+        printStream.println("[13] Импортировать все заказы");
+
+
+
+        printStream.println("[14] Вернуться в главное меню");
+        printStream.println("[15] Выйти из программы");
         printStream.print("Введите число: ");
     }
 

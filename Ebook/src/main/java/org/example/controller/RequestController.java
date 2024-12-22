@@ -58,9 +58,8 @@ public class RequestController implements Controller {
                 Long id = getScannerNumber();
                 requestBookManager.importModel(id);
             }
-            case 7 -> {
-                requestBookManager.importAll();
-            }
+            case 7 -> requestBookManager.importAll();
+
             case 8 -> actionType = ActionType.MAIN_MENU;
             case 9 -> actionType = ActionType.EXIT;
             default -> requestBookMenu.showErrorInput();

@@ -121,8 +121,13 @@ public class Order implements SrvExporter {
         temp.append(createDate).append(DEFAULT_DELIMITER);
         temp.append(completedDate).append(DEFAULT_DELIMITER);
         temp.append(amountSum).append(DEFAULT_DELIMITER);
-        temp.append(orderStatusEnum).append(DEFAULT_DELIMITER);
+        temp.append(orderStatusEnum);
 
+        if (bookListInOrder.size() == 0) {
+            temp.append("\n");
+        } else {
+            temp.append(DEFAULT_DELIMITER);
+        }
         for (int i = 0; i < bookListInOrder.size(); i++) {
             temp.append(bookListInOrder.get(i).getId());
             if (i != bookListInOrder.size() - 1) {

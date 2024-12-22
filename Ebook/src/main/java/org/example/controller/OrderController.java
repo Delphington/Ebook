@@ -82,8 +82,20 @@ public class OrderController implements Controller {
             case 7 -> printStream.println(orderManager.getOrderList().get(orderManager.getSelectedOrderIndex()));
             case 8 -> printStream.println("Прибыль закрытый заказов: " + orderManager.calculateCompletedOrderProfit());
             case 9 -> printMenuListBook();
-            case 10 -> actionType = ActionType.MAIN_MENU;
-            case 11 -> actionType = ActionType.EXIT;
+
+            case 10 -> orderManager.exportModel(getIdChoose(orderManager.getOrderList()));
+
+            case 11 -> {orderManager.exportAll();}
+            case 12 -> {}
+            case 13 -> {}
+//            printStream.println("[10] Экспортировать заказ");
+//            printStream.println("[11] Экспортировать все заказы");
+//            printStream.println("[12] Импортировать заказ");
+//            printStream.println("[13] Импортировать все заказы");
+//
+
+            case 14 -> actionType = ActionType.MAIN_MENU;
+            case 15 -> actionType = ActionType.EXIT;
 
             default -> {
                 actionType = ActionType.BOOK_MENU;

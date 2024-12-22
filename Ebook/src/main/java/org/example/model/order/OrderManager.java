@@ -6,6 +6,7 @@ import org.example.model.*;
 import org.example.model.book.Book;
 import org.example.model.book.BookManager;
 import org.example.model.book.StatusBookEnum;
+import org.example.model.exception.NoClearFileException;
 import org.example.model.request.RequestBook;
 import org.example.model.request.RequestBookManager;
 import org.example.model.request.RequestBookStatus;
@@ -181,6 +182,24 @@ public class OrderManager implements SrvFileManager {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void exportModel(Long id){
+        if (!clearFile(EXPORT_FILE_ORDER)) {
+            throw new NoClearFileException("### Ошибка очистки файла файла!");
+        }
+
+        Optional<Order> optionalBook = findById(id);
+        if (optionalBook.isPresent()) {
+            Order order = optionalBook.get();
+            if (order.writeTitle(EXPORT_FILE_ORDER, order.generateTitle()) &&
+                order.writeDate(EXPORT_FILE_ORDER)) {
+                printStream.printf("### Успешно экспортирована книга id = %d\n", id);
+                return;
+            }
+        }
+        printStream.println("### Такой книги нет!");
     }
 
 
