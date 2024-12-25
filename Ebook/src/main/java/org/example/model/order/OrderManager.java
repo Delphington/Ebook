@@ -170,11 +170,68 @@ public class OrderManager implements SrvFileManager {
 
     // --------------------- Работа с файлами --------------------------------
 
-    private void addOrder(Order order) {
-        orderList.add(order);
+
+    ///БАГ ПОФИКСИТЬ
+
+    private Optional<Order> getBuildObject(String line, final Long id) {
+        Optional<String[]> optional = getParseLine(line);
+        if (optional.isEmpty()) { // Плохо распарсилось
+            return Optional.empty();
+        }
+        String[] arr = optional.get();
+
+        //Сколько ожидаем уравнений
+        if (arr.length < 5) {
+            return Optional.empty();
+        }
+
+        Long orderId = null;
+        LocalDate createDate = null;
+        LocalDate completedDate = null;
+        Double amountSum = null;
+        StatusOrderEnum orderStatusEnum = null;
+
+        try {
+            orderId = Long.parseLong(arr[0]);
+            createDate = LocalDate.parse(arr[1]);
+
+            try {
+                completedDate = LocalDate.parse(arr[2]);
+            } catch (RuntimeException e) {
+            }
+
+            amountSum = Double.parseDouble(arr[3]);
+            orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
+        } catch (RuntimeException e) {
+            System.err.println("Ошибка: преобразование объекта");
+            return Optional.empty();
+        }
+
+
+        if (id != null && !Objects.equals(id, orderId)) {
+            return Optional.empty();
+        }
+
+        List<Book> listBook = new ArrayList<>();
+
+        for (int i = 5; i < arr.length; i++) {
+            Long bookId = null;
+            try {
+                bookId = Long.parseLong(arr[i]);
+            } catch (RuntimeException e) {
+                System.err.println("### Не верное преобразование айди книги");
+            }
+            if (bookId != null && bookManager.getMapBooks().get(bookId) != null) {
+                listBook.add(bookManager.getMapBooks().get(bookId));
+            }
+        }
+
+        Order order = new Order(orderId, createDate, completedDate, amountSum, orderStatusEnum);
+
+        order.addBook(listBook);
+
+        return Optional.of(order);
     }
-
-
 
 
     @Override
@@ -184,7 +241,7 @@ public class OrderManager implements SrvFileManager {
             String line;
             while ((line = reader.readLine()) != null) {
 
-                Optional<Order> optional = getBuiltOrder(line, id);
+                Optional<Order> optional = getBuildObject(line, id);
                 if (optional.isPresent()) {
                     Order order = optional.get();
 
@@ -197,7 +254,6 @@ public class OrderManager implements SrvFileManager {
 
                     } else {
                         orderList.add(order);
-                        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
                         printStream.println("### Заказ испортирован!");
                         return;
                     }
@@ -216,11 +272,9 @@ public class OrderManager implements SrvFileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_ORDER))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<Order> optional = getBuiltOrder(getParseLine(line).get());
-                System.out.println("line " + line);
+                Optional<Order> optional = getBuildObject(line, null);
                 if (optional.isPresent()) {
                     Order order = optional.get();
-
                     //Обновление есть
                     Optional<Order> orderBookOptional = findById(order.getId(), orderList);
                     if (orderBookOptional.isPresent()) {
@@ -230,129 +284,20 @@ public class OrderManager implements SrvFileManager {
                         orderList.add(order);
                     }
 
-                } else {
-                    System.out.println("### Заказ не считался");
                 }
             }
+            printStream.println("### Заказы импортированны!");
+            return;
+
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-        System.out.println("### Все успешно импортировалось");
+        printStream.println("### WARN заказ не импортировались");
 
-    }
-
-    //todo: преобразование элемента в функцию
-//todo: опасные моменты когда get и передается массив
-
-    private Optional<Order> getBuiltOrder(String[] arr) {
-
-        //Минимальное количество для заказа (без книг)
-        if (arr.length < 4) {
-            return Optional.empty();
-        }
-
-        Long id = null;
-        LocalDate createDate = null;
-        LocalDate completedDate = null;
-        Double amountSum = null;
-        StatusOrderEnum orderStatusEnum = null;
-        try {
-            id = Long.parseLong(arr[0]);
-
-            createDate = LocalDate.parse(arr[1]);
-            try {
-                completedDate = LocalDate.parse(arr[2]);
-            } catch (RuntimeException e) {
-                //  System.out.println("### ComplectedDate is NULL");
-            }
-            amountSum = Double.parseDouble(arr[3]);
-            orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
-        } catch (RuntimeException e) {
-            System.err.println("Ошибка: преобразование объекта");
-            return Optional.empty();
-        }
-
-        Order order = new Order(id, createDate, completedDate, amountSum, orderStatusEnum);
-
-        for (int i = 5; i < arr.length; i++) {
-            Long bookId = null;
-            try {
-                bookId = Long.parseLong(arr[i]);
-            } catch (RuntimeException e) {
-                //todo: выкинуть свой Exception
-                System.err.println("### Не верное преобразование айди книги");
-            }
-            if (bookId != null && bookManager.getMapBooks().get(bookId) != null) {
-                order.addBook(bookManager.getMapBooks().get(bookId));
-            }
-
-        }
-        return Optional.of(order);
-    }
-
-
-    private Optional<Order> getBuiltOrder(String input, Long ids) {
-        //ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N
-        Optional<String[]> optional = getParseLine(input);
-        if (optional.isPresent()) {
-            String[] arr = optional.get();
-
-
-            //Минимальное количество для заказа (без книг)
-            if (arr.length < 5) {
-                return Optional.empty();
-            }
-
-            Long id = null;
-            LocalDate createDate = null;
-            LocalDate completedDate = null;
-            Double amountSum = null;
-            StatusOrderEnum orderStatusEnum = null;
-            try {
-                id = Long.parseLong(arr[0]);
-
-                if (!Objects.equals(id, ids)) {
-                    return Optional.empty();
-                }
-
-                createDate = LocalDate.parse(arr[1]);
-                try {
-                    completedDate = LocalDate.parse(arr[2]);
-                } catch (RuntimeException e) {
-                    //  System.out.println("### ComplectedDate is NULL");
-                }
-                amountSum = Double.parseDouble(arr[3]);
-                orderStatusEnum = StatusOrderEnum.valueOf(arr[4]);
-            } catch (RuntimeException e) {
-                System.err.println("Ошибка: преобразование объекта");
-                return Optional.empty();
-            }
-
-            Order order = new Order(id, createDate, completedDate, amountSum, orderStatusEnum);
-
-            for (int i = 5; i < arr.length; i++) {
-                Long bookId = null;
-                try {
-                    bookId = Long.parseLong(arr[i]);
-                } catch (RuntimeException e) {
-                    //todo: выкинуть свой Exception
-                    System.err.println("### Не верное преобразование айди книги");
-                }
-                if (bookId != null && bookManager.getMapBooks().get(bookId) != null) {
-                    order.addBook(bookManager.getMapBooks().get(bookId));
-                }
-
-            }
-            return Optional.of(order);
-        }
-
-        return Optional.empty();
     }
 
 
     // --------------- Сортировки --------------------------
-
-
     public List<Order> sortByCompletedOrdersBetweenDates(List<Order> orderList, LocalDate from, LocalDate to) {
         return orderList.stream()
                 .filter(order -> order.getOrderStatusEnum() == StatusOrderEnum.DONE)

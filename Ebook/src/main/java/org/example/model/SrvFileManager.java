@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public interface SrvFileManager extends ConstantsPath {
@@ -21,11 +22,11 @@ public interface SrvFileManager extends ConstantsPath {
 
     void importModel(Long id);
 
-   // void exportAll();
+    // void exportAll();
 
     void importAll();
 
-
+    //----------------- Экспортировка всех элементов Book, Order, RequestBook -----------------------
     default <T extends Item> void exportAll(final String path, final String title, List<T> list) {
         if (!clearFile(path)) {
             printStream.println("### Ошибка очистки файла файлами");
@@ -33,8 +34,8 @@ public interface SrvFileManager extends ConstantsPath {
         }
         try {
             writeTitle(path, title);
-            for (int i = 0; i < list.size(); i++) {
-                list.get(i).writeDate(path);
+            for (T t : list) {
+                t.writeDate(path);
             }
         } catch (RuntimeException e) {
             printStream.println("### Запись не произошла! ");
@@ -66,7 +67,7 @@ public interface SrvFileManager extends ConstantsPath {
     //----------------- Поиск по Id у элементов Book, Order, RequestBook -----------------------
     default <T extends Item> Optional<T> findById(Long id, List<T> list) {
         for (T item : list) {
-            if (item.getId().equals(id)) {
+            if(Objects.equals(item.getId(), id)){
                 return Optional.of(item);
             }
         }

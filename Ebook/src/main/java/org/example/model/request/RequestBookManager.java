@@ -72,8 +72,45 @@ public class RequestBookManager implements SrvFileManager {
     }
 
     // ---------------------- Для работы с файлами -----------------------------------------
+//--------
+    private Optional<RequestBook> getBuildObject(String line, final Long id) {
+        Optional<String[]> optional = getParseLine(line);
+        if (optional.isEmpty()) { // Плохо распарсилось
+            return Optional.empty();
+        }
+        String[] arr = optional.get();
+
+        //Сколько ожидаем уравнений
+        if (arr.length != 3) {
+            return Optional.empty();
+        }
+
+        Long requestId = null;
+        Long bookId = null;
+        RequestBookStatus requestBookStatus = null;
+        try {
+            requestId = Long.parseLong(arr[0]);
+            bookId = Long.parseLong(arr[1]);
+            requestBookStatus = RequestBookStatus.valueOf(arr[2]);
+        } catch (RuntimeException e) {
+            return Optional.empty(); //Не верное преобразование
+        }
+
+        //todo: про количество книг
+
+        if (bookManager.getMapBooks().get(bookId) == null) {
+            System.out.println("### Ошибка: Запрос на книгу, которой нет в библио");
+            return Optional.empty();
+        }
 
 
+        //Проверка друг id
+        if (id != null && !Objects.equals(requestId, id)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new RequestBook(requestId, bookManager.getMapBooks().get(bookId), requestBookStatus));
+    }
 
 
     @Override
@@ -82,7 +119,7 @@ public class RequestBookManager implements SrvFileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_REQUEST_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<RequestBook> optional = builtRequestBook(line, id);
+                Optional<RequestBook> optional = getBuildObject(line, id);
                 if (optional.isPresent()) {
                     RequestBook requestBook = optional.get();
                     //Обновление есть
@@ -109,68 +146,14 @@ public class RequestBookManager implements SrvFileManager {
         }
     }
 
-    private Optional<RequestBook> builtRequestBook(String input, Long id) {
-        Optional<String[]> optional = getParseLine(input);
-        if (optional.isPresent() && optional.get().length > 2) {
-            String[] arr = optional.get();
-            Long requestId = null;
-            try {
-                requestId = Long.parseLong(arr[0]);
-                if (!Objects.equals(id, requestId)) {
-                    return Optional.empty();
-                }
-            } catch (RuntimeException e) {
-            }
-            try {
-
-                Long bookId = Long.parseLong(arr[1]);
-                RequestBookStatus requestBookStatus = RequestBookStatus.valueOf(arr[2]);
-
-                if (bookManager.getMapBooks().get(bookId) == null) {
-                    System.out.println("### Ошибка: Запрос на книгу, которой нет в библио");
-                    return Optional.empty();
-                }
-
-                //todo: про количество книг
-                return Optional.of(new RequestBook(requestId, bookManager.getMapBooks().get(bookId), requestBookStatus));
-            } catch (RuntimeException e) {
-                System.out.println("### Ошибка: преобразование объекта");
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
-    }
-
-
-    private Optional<RequestBook> getBuolt(String[] arr) {
-
-        try {
-            Long requestId = Long.parseLong(arr[0]);
-
-            Long bookId = Long.parseLong(arr[1]);
-            RequestBookStatus requestBookStatus = RequestBookStatus.valueOf(arr[2]);
-
-            if (bookManager.getMapBooks().get(bookId) == null) {
-                System.out.println("### Ошибка: Запрос на книгу, которой нет в библио");
-                return Optional.empty();
-            }
-            return Optional.of(new RequestBook(requestId, bookManager.getMapBooks().get(bookId), requestBookStatus));
-
-        } catch (RuntimeException e) {
-            System.out.println("### Ошибка: преобразование объекта");
-            return Optional.empty();
-        }
-    }
-
     @Override
     public void importAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_REQUEST_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<RequestBook> optionalRequestBookFromFile = getBuolt(getParseLine(line).get());
+                Optional<RequestBook> optionalRequestBookFromFile = getBuildObject(line, null);
                 if (optionalRequestBookFromFile.isPresent()) {
                     RequestBook requestBookFromFile = optionalRequestBookFromFile.get();
-
                     Optional<RequestBook> requestBookOptional = findById(requestBookFromFile.getId(), RequestBook.requestBookList);
                     if (requestBookOptional.isPresent()) {
                         requestBookOptional.get().copyOf(requestBookFromFile);

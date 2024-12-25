@@ -48,7 +48,7 @@ public class BookController implements Controller {
             }
             case 3 -> printMenuListBook();
 
-            case 4 -> bookManager.exportItem(getIdChooseBook(bookManager.getMapBooks()),
+            case 4 -> bookManager.exportItem(getIdChoose(bookManager.updateListBook()),
                     ConstantsPath.EXPORT_FILE_BOOK, ConstantsPath.BOOK_TITLE,
                     bookManager.updateListBook());
 
@@ -83,6 +83,7 @@ public class BookController implements Controller {
         }
 
         switch (choseAction) {
+            case 1 -> bookMenu.printListObject(bookManager.sortByNameBook(bookManager.updateListBook()));
             case 2 -> bookMenu.printListObject(bookManager.sortByDatePublished(bookManager.updateListBook()));
             case 3 -> bookMenu.printListObject(bookManager.sorByPrice(bookManager.updateListBook()));
             case 4 -> bookMenu.printListObject(bookManager.sortByAmount(bookManager.updateListBook()));

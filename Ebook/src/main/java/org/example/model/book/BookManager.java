@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import org.example.model.SrvFileManager;
 import org.example.model.exception.NoClearFileException;
+import org.example.model.request.RequestBook;
+import org.example.model.request.RequestBookStatus;
 
 
 public class BookManager implements SrvFileManager {
@@ -39,10 +41,67 @@ public class BookManager implements SrvFileManager {
 
 
     // -------------------- Работа с файлами -------------------------------
+    //todo: лишние выводы
 
+    //От тестить
+    private Optional<Book> getBuildObject(String line, final Long id) {
+        if (id != null && mapBooks.get(id) == null) {
+            return Optional.empty();
+        }
 
+        Optional<String[]> optional = getParseLine(line);
+        if (optional.isEmpty()) { // Плохо распарсилось
+            return Optional.empty();
+        }
 
-    //todo: рефакторинг лишних выводов, И титульной строки
+        String[] arr = optional.get();
+
+        //Сколько ожидаем уравнений
+        if (arr.length < 10) {
+            return Optional.empty();
+        }
+
+        Long bookId = null;
+        String name;
+        String author;
+        LocalDate publishedDate;
+        String description;
+        Double price;
+        Integer amount;
+        StatusBookEnum statusBookEnum;
+        Integer references;
+        LocalDate lastDeliverDate;
+        LocalDate lastSelleDate;
+        try {
+            bookId = Long.parseLong(arr[0]);
+            name = arr[1];
+            author = arr[2];
+            publishedDate = LocalDate.parse(arr[3]);
+            description = arr[4];
+            price = Double.parseDouble(arr[5]);
+            amount = Integer.parseInt(arr[6]);
+            statusBookEnum = StatusBookEnum.valueOf(arr[7]);
+            references = Integer.parseInt(arr[8]);
+            lastDeliverDate = LocalDate.parse(arr[9]);
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+
+        if (id != null && !Objects.equals(id, bookId)) {
+            return Optional.empty();
+        }
+
+        if (arr[10].equals("null")) {
+            //todo: подумать
+            lastSelleDate = LocalDate.now();
+        } else {
+            lastSelleDate = LocalDate.parse(arr[10]);
+        }
+
+        return Optional.of(new Book(bookId, name, author, publishedDate, description, price,
+                amount, statusBookEnum, references, lastDeliverDate, lastSelleDate));
+
+    }
 
 
     @Override
@@ -50,16 +109,18 @@ public class BookManager implements SrvFileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<Book> optional = builtBook(line, id);
+                Optional<Book> optional = getBuildObject(line, id);
                 if (optional.isPresent()) {
                     Book book = optional.get();
                     mapBooks.put(book.getId(), book);
                     printStream.println("### Книга импортирована");
+                    return;
                 }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
+        printStream.println("### WARN: Импорта не было!");
     }
 
 
@@ -68,76 +129,19 @@ public class BookManager implements SrvFileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(IMPORT_FILE_BOOK))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Optional<Book> optional = createBookFromFile(getParseLine(line).get());
+                Optional<Book> optional = getBuildObject(line, null);
                 //Все отвественной за вывод на консоль происходит в builtBook
                 if (optional.isPresent()) {
                     Book book = optional.get();
                     mapBooks.put(book.getId(), book);
                 }
             }
+            printStream.println("### Книги импортированны!");
+            return;
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-    }
-
-    private Optional<Book> builtBook(String input, Long id) {
-        if (mapBooks.get(id) == null) {
-            System.out.println("### Такой книги нет В библиотеке");
-            return Optional.empty();
-        }
-
-        Optional<String[]> optional = getParseLine(input);
-        if (optional.isPresent() && optional.get().length > 1) {
-            String[] arr = optional.get();
-            try {
-                Long idTemp = Long.parseLong(arr[0]);
-
-                if (Objects.equals(idTemp, id)) {
-                    return createBookFromFile(arr);
-                }
-
-            } catch (RuntimeException e) {
-                System.out.println("### Ошибка: преобразование объекта");
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
-    }
-
-
-    private Optional<Book> createBookFromFile(String[] arr) {
-        try {
-            Long id = Long.parseLong(arr[0]);
-
-            if (mapBooks.get(id) == null) {
-                printStream.println("### Ошибка. Книги нет в библиотеке, нельзя импортировать");
-                return Optional.empty();
-            }
-
-            String name = arr[1];
-            String author = arr[2];
-            LocalDate publishedDate = LocalDate.parse(arr[3]);
-            String description = arr[4];
-            Double price = Double.parseDouble(arr[5]);
-            Integer amount = Integer.parseInt(arr[6]);
-            StatusBookEnum statusBookEnum = StatusBookEnum.valueOf(arr[7]);
-            Integer references = Integer.parseInt(arr[8]);
-            LocalDate lastDeliverDate = LocalDate.parse(arr[9]);
-            LocalDate lastSelleDate;
-
-            if (arr[10].equals("null")) {
-                //todo: подумать
-                lastSelleDate = LocalDate.now();
-            } else {
-                lastSelleDate = LocalDate.parse(arr[10]);
-            }
-
-            return Optional.of(new Book(id, name, author, publishedDate, description, price,
-                    amount, statusBookEnum, references, lastDeliverDate, lastSelleDate));
-        } catch (RuntimeException e) {
-            System.out.println("### Не корректное преобразование строк");
-            return Optional.empty();
-        }
+        printStream.println("### WARN книги не импортировались");
     }
 
 

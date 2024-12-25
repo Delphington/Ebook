@@ -42,6 +42,10 @@ public class Order implements Item {
     }
 
 
+    public void addBook(List<Book> listBook){
+        bookListInOrder = listBook;
+    }
+
     //Если ли бук в листе??
     public void addBook(Book book) {
         if (orderStatusEnum == StatusOrderEnum.CANCEL) {

@@ -8,15 +8,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public interface Item {
-   Long getId();
+    Long getId();
 
     String DEFAULT_DELIMITER = ",";
 
     String generateInfoObject();
 
-   // String generateTitle();
 
-    default boolean writeDate(String strPath)  {
+    default boolean writeDate(String strPath) {
         Path path = Paths.get(strPath);
 
         // Убедимся, что родительская директория существует

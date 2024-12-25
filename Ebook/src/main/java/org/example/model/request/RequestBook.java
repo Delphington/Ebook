@@ -57,16 +57,6 @@ public class RequestBook implements Item {
         return temp.toString();
     }
 
-
-
-
-    public void of(RequestBook requestBook) {
-        id = requestBook.getId();
-        book = requestBook.getBook();
-        requestBookStatus = requestBook.getRequestBookStatus();
-    }
-
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {
