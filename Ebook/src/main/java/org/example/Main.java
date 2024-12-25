@@ -19,7 +19,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-
+        //TODO экспорт книги и инцилизацию вынести
 
         // 1. Создание отдельных переменных для каждого объекта Book:
         Book book1 = new Book("1A", "1B", LocalDate.of(1954, 7, 29), "1", 101.0, 0);

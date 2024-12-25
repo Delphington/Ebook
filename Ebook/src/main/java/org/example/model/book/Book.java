@@ -137,5 +137,4 @@ public class Book implements Item {
         temp.append(lastSelleDate).append("\n");
         return temp.toString();
     }
-
 }

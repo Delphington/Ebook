@@ -2,7 +2,6 @@ package org.example.model;
 
 import org.example.ConstantsPath;
 import org.example.model.exception.NoClearFileException;
-import org.example.model.request.RequestBook;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -22,20 +21,22 @@ public interface SrvFileManager extends ConstantsPath {
 
     void importModel(Long id);
 
-    // void exportAll();
-
     void importAll();
 
     //----------------- Экспортировка всех элементов Book, Order, RequestBook -----------------------
     default <T extends Item> void exportAll(final String path, final String title, List<T> list) {
-        if (!clearFile(path)) {
+        if (clearFileData(path)) {
             printStream.println("### Ошибка очистки файла файлами");
             return;
         }
         try {
-            writeTitle(path, title);
+            boolean flag = true;
             for (T t : list) {
-                t.writeDate(path);
+                if (flag) {
+                    t.writeToFile(path, title);
+                    flag = false;
+                }
+                t.writeToFile(path, null);
             }
         } catch (RuntimeException e) {
             printStream.println("### Запись не произошла! ");
@@ -47,15 +48,15 @@ public interface SrvFileManager extends ConstantsPath {
 
     //----------------- Экспортировка по Id у элементов Book, Order, RequestBook -----------------------
     default <T extends Item> void exportItem(Long id, final String path, final String title, List<T> list) {
-        if (!clearFile(path)) {
+        if (clearFileData(path)) {
             throw new NoClearFileException("### Ошибка очистки файла файла!");
         }
 
         Optional<T> optionalBook = findById(id, list);
         if (optionalBook.isPresent()) {
             T item = optionalBook.get();
-            if (item.writeTitle(EXPORT_FILE_ORDER, title) &&
-                item.writeDate(EXPORT_FILE_ORDER)) {
+            if (item.writeToFile(EXPORT_FILE_ORDER, title) &&
+                item.writeToFile(EXPORT_FILE_ORDER, null)) {
                 printStream.printf("### Успешно экспортирована книга id = %d\n", id);
                 return;
             }
@@ -67,7 +68,7 @@ public interface SrvFileManager extends ConstantsPath {
     //----------------- Поиск по Id у элементов Book, Order, RequestBook -----------------------
     default <T extends Item> Optional<T> findById(Long id, List<T> list) {
         for (T item : list) {
-            if(Objects.equals(item.getId(), id)){
+            if (Objects.equals(item.getId(), id)) {
                 return Optional.of(item);
             }
         }
@@ -75,14 +76,14 @@ public interface SrvFileManager extends ConstantsPath {
     }
 
 
-    default boolean clearFile(String filePath) {
+    default boolean clearFileData(String filePath) {
         Path path = Paths.get(filePath);
         try {
             Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING).close();
-            return true;
+            return false;
         } catch (IOException e) {
             System.err.println("Error clearing file: " + e.getMessage());
-            return false;
+            return true;
         }
     }
 
@@ -93,6 +94,7 @@ public interface SrvFileManager extends ConstantsPath {
         return Optional.of(input.split(DEFAULT_DELIMITER));
     }
 
+
     default void printAllFile(final String path) {
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
@@ -102,29 +104,5 @@ public interface SrvFileManager extends ConstantsPath {
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
         }
-    }
-
-
-    default boolean writeTitle(String strPath, String title) {
-        Path path = Paths.get(strPath);
-        // Убедимся, что родительская директория существует
-        Path parentDir = path.getParent();
-        if (parentDir != null) {
-            try {
-                Files.createDirectories(parentDir);
-            } catch (IOException e) {
-                System.err.println("Ошибка в директории: " + e.getMessage());
-                throw new RuntimeException(e);
-            }
-        }
-
-        try (BufferedWriter writer = Files.newBufferedWriter(path,
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
-            writer.write(title); // Используем BufferedWriter
-        } catch (IOException e) {
-            System.err.println("Ошибка при записи в файл: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return true;
     }
 }

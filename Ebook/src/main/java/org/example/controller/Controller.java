@@ -16,11 +16,6 @@ public interface Controller {
 
     ActionType run();
 
-
-
-
-
-
     default Long getIdChooseBook(Map<Long, Book> mapa) {
         printStream.println("Выбирите id книгу для заказа: ");
         for (Map.Entry<Long, Book> item : mapa.entrySet()) {
@@ -104,8 +99,6 @@ public interface Controller {
             }
         }
         return index;
-
     }
-
 
 }

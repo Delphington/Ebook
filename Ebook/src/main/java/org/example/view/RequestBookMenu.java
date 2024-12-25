@@ -1,7 +1,5 @@
 package org.example.view;
 
-import java.util.List;
-
 public class RequestBookMenu implements Menu {
     @Override
     public void showMenu() {
@@ -17,16 +15,5 @@ public class RequestBookMenu implements Menu {
         printStream.println("[7] Импортировать все запросы");
         printStream.println("[8] Вернуться в главное меню");
         printStream.println("[9] Выйти из программы");
-    }
-
-    @Override
-    public void printListObject(List<? extends Object> requests) {
-        if(requests.size() ==0 ){
-            printStream.println("### В массиве пусто");
-            return;
-        }
-        for (int i = 0; i < requests.size(); i++) {
-            printStream.println("{" + (i + 1) + "} " + requests.get(i));
-        }
     }
 }

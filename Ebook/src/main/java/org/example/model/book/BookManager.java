@@ -41,9 +41,6 @@ public class BookManager implements SrvFileManager {
 
 
     // -------------------- Работа с файлами -------------------------------
-    //todo: лишние выводы
-
-    //От тестить
     private Optional<Book> getBuildObject(String line, final Long id) {
         if (id != null && mapBooks.get(id) == null) {
             return Optional.empty();

@@ -10,9 +10,7 @@ public interface ConstantsPath {
     String EXPORT_FILE_REQUEST_BOOK = "src/main/resources/export/exportRequests.csv";
     String IMPORT_FILE_REQUEST_BOOK = "src/main/resources/import/importRequests.csv";
 
-
     String BOOK_TITLE = "id;name;author;publishedData;description;price;amount;statusBookEnum;references;lastDeliverDate;lastSelleDate\n";
     String ORDER_TITLE = "ID:createDate:completedDate:amountSum:orderStatusEnum:bookId_N\n";
     String REQUEST_TITLE = "IDRequest:IdBook:status\n";
-
 }

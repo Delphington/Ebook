@@ -1,7 +1,5 @@
 package org.example.view;
 
-import java.util.List;
-
 public class BookMenu implements Menu {
     @Override
     public void showMenu() {
@@ -29,16 +27,5 @@ public class BookMenu implements Menu {
         printStream.println("[5] Вывести список залежавшихся книг (сортировка по дате поступления)");
         printStream.println("[6] Вывести список залежавшихся книг (сортировка по цене)");
 
-    }
-
-    @Override
-    public void printListObject(List<? extends Object> book) {
-        if (book.size() == 0) {
-            printStream.println("### В массиве пусто");
-            return;
-        }
-        for (int i = 0; i < book.size(); i++) {
-            printStream.println("{" + (i + 1) + "} " + book.get(i));
-        }
     }
 }
